@@ -5,22 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEP Result Calculator</title>
 <style>
-body { font-family: Arial, sans-serif; background:#f7f9fb; padding:20px; }
-h1 { text-align:center; }
-.description { font-weight:bold; text-align:center; margin-bottom:20px; }
-.subject-section { margin-bottom:20px; }
-.subject { margin-bottom:10px; }
-label { display:inline-block; width:200px; }
-input[type=number] { width:60px; margin-right:10px; }
-button { padding:5px 10px; margin-top:10px; cursor:pointer; background:#007BFF; color:#fff; border:none; border-radius:5px; }
+body { font-family: Arial, sans-serif; background:#f7f9fb; padding:10px; margin:0; }
+h1 { text-align:center; font-size:1.5em; }
+.description { font-weight:bold; text-align:center; margin-bottom:15px; font-size:0.9em; }
+.subject-section { margin-bottom:15px; }
+.subject { margin-bottom:8px; display:flex; flex-wrap:wrap; align-items:center; }
+.subject label { width:100%; margin-bottom:5px; font-weight:bold; }
+.subject input[type=number] { width:70px; margin-right:10px; margin-bottom:5px; }
+button { padding:5px 10px; margin:5px 5px 5px 0; cursor:pointer; background:#007BFF; color:#fff; border:none; border-radius:5px; font-size:0.9em; }
 button:hover { background:#0056b3; }
-table { width:100%; border-collapse: collapse; margin-top:20px; }
-th, td { border:1px solid #ccc; padding:8px; text-align:center; }
-th { background:#f0f0f0; }
+table { width:100%; border-collapse: collapse; margin-top:15px; font-size:0.85em; }
+th, td { border:1px solid #ccc; padding:6px; text-align:center; }
+th { background:#f0f0f0; font-size:0.8em; }
 .pass { color:green; font-weight:bold; }
 .fail { color:red; font-weight:bold; }
 .grace { color:red; font-weight:bold; }
-#overall { font-size:24px; text-align:center; margin-top:20px; font-weight:bold; }
+#overall { font-size:1.2em; text-align:center; margin-top:10px; font-weight:bold; word-wrap: break-word; }
+@media(max-width:600px){
+  .subject { flex-direction: column; align-items: flex-start; }
+  .subject input[type=number] { width:100%; }
+  table { font-size:0.7em; }
+  th, td { padding:4px; }
+}
 </style>
 </head>
 <body>
@@ -94,7 +100,7 @@ Internal <input type="number" min="0" max="25" class="coInternal">
 let majorTheoryCount=0, majorPracticalCount=0, minorCount=0, skillCount=0, projectCount=0;
 const maxGrace=5, maxGraceSubjects=3;
 
-// By default 3 major theory subjects
+// Default 3 major theory
 for(let i=0;i<3;i++) addMajorTheory();
 
 // Functions to add subjects
@@ -145,7 +151,6 @@ function calculateResult(){
   const coInt=Number(document.querySelector(".coInternal").value)||0;
   if(coExt || coInt) subjects.push({name:"Co-Curricular",ext:coExt,internal:coInt,type:"coCurricular",grace:0});
 
-  // Check if subject passes
   function checkPass(subj,extTotal){
     const total=subj.internal+extTotal;
     if(subj.type==="majorTheory"||subj.type==="minor") return (extTotal>=25 && total>=33);
@@ -154,10 +159,8 @@ function calculateResult(){
     return false;
   }
 
-  // Apply grace intelligently
-  let remainingGraceSubjects=maxGraceSubjects;
-
   // Step 1: Apply grace to subjects which can pass with grace
+  let remainingGraceSubjects=maxGraceSubjects;
   subjects.forEach(subj=>{
     if(graceLeft<=0 || remainingGraceSubjects<=0) return;
     if(subj.grace>0) return;
@@ -170,10 +173,8 @@ function calculateResult(){
     }
     if(needGrace>0 && checkPass(subj,subj.ext+Math.min(needGrace,graceLeft))){
       const applied=Math.min(needGrace,graceLeft);
-      subj.ext+=applied;
-      subj.grace+=applied;
-      graceLeft-=applied;
-      remainingGraceSubjects--;
+      subj.ext+=applied; subj.grace+=applied;
+      graceLeft-=applied; remainingGraceSubjects--;
     }
   });
 
@@ -190,17 +191,20 @@ function calculateResult(){
     }
     if(needGrace>0){
       const applied=Math.min(needGrace,graceLeft);
-      subj.ext+=applied;
-      subj.grace+=applied;
-      graceLeft-=applied;
-      remainingGraceSubjects--;
+      subj.ext+=applied; subj.grace+=applied;
+      graceLeft-=applied; remainingGraceSubjects--;
     }
   });
+
+  // Check if any subject still fails after grace
+  let anyFailAfterGrace=false;
+  subjects.forEach(subj=>{ if(!checkPass(subj,subj.ext)) anyFailAfterGrace=true; });
 
   // Populate table
   subjects.forEach(subj=>{
     const total=subj.ext+subj.internal;
     let status=checkPass(subj,subj.ext)?"Pass":"Fail";
+    if(anyFailAfterGrace && status==="Pass") status="Fail"; // Rule: all fail if any fail
     if(status==="Fail") overallPass=false;
 
     let short=0;
@@ -222,7 +226,12 @@ function calculateResult(){
     tbody.appendChild(tr);
   });
 
-  document.getElementById("overall").innerHTML=`Overall Result: <span class="${overallPass?'pass':'fail'}">${overallPass?'PASS':'FAIL'}</span>`;
+  // Show overall message
+  if(anyFailAfterGrace){
+    document.getElementById("overall").innerHTML='Overall Result: <span class="fail">Fail (ग्रेस मिलने के बाद भी यदि किसी भी विषय में बैक रहती है तो किसी भी विषय में ग्रेस नहीं मिलेगा)</span>';
+  } else {
+    document.getElementById("overall").innerHTML=`Overall Result: <span class="${overallPass?'pass':'fail'}">${overallPass?'PASS':'FAIL'}</span>`;
+  }
 }
 
 function resetForm(){ location.reload(); }
