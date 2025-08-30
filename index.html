@@ -20,7 +20,7 @@ th { background:#f0f0f0; font-size:0.8em; }
 .pass { color:green; font-weight:bold; }
 .fail { color:red; font-weight:bold; }
 .grace { color:red; font-weight:bold; }
-#overall { font-size:1.2em; text-align:center; margin-top:10px; font-weight:bold; word-wrap: break-word; }
+#overall { font-size:1.2em; text-align:center; margin-top:10px; word-wrap: break-word; font-weight:bold; }
 @media(max-width:600px){
   .subject { flex-direction: column; align-items: flex-start; }
   .subject input[type=number] { width:100%; }
@@ -124,7 +124,7 @@ function calculateResult(){
   const tbody=document.querySelector("#resultTable tbody");
   tbody.innerHTML="";
   let overallPass=true;
-  let graceLeft=maxGrace, graceSubjectsUsed=0;
+  let graceLeft=maxGrace, remainingGraceSubjects=maxGraceSubjects;
 
   // Gather all subjects
   let subjects=[];
@@ -141,7 +141,7 @@ function calculateResult(){
       const ext=Number(el.value)||0;
       const intr=intClass?Number(intInputs[i].value)||0:0;
       if(ext!==0 || intr!==0){
-        subjects.push({name:`${displayName} ${i+1}`,ext,internal:intr,type,grace:0});
+        subjects.push({name:`${displayName} ${i+1}`,ext,internal:intr,type,grace:0, initialPass: false});
       }
     });
   });
@@ -149,7 +149,7 @@ function calculateResult(){
   // Co-Curricular
   const coExt=Number(document.querySelector(".coExternal").value)||0;
   const coInt=Number(document.querySelector(".coInternal").value)||0;
-  if(coExt || coInt) subjects.push({name:"Co-Curricular",ext:coExt,internal:coInt,type:"coCurricular",grace:0});
+  if(coExt || coInt) subjects.push({name:"Co-Curricular",ext:coExt,internal:coInt,type:"coCurricular",grace:0, initialPass:false});
 
   function checkPass(subj,extTotal){
     const total=subj.internal+extTotal;
@@ -159,52 +159,64 @@ function calculateResult(){
     return false;
   }
 
-  // Step 1: Apply grace to subjects which can pass with grace
-  let remainingGraceSubjects=maxGraceSubjects;
+  // Record initial pass/fail
+  subjects.forEach(subj=>{
+    subj.initialPass = checkPass(subj,subj.ext);
+  });
+
+  // Step 1: Apply grace to eligible subjects that can pass with grace
   subjects.forEach(subj=>{
     if(graceLeft<=0 || remainingGraceSubjects<=0) return;
-    if(subj.grace>0) return;
-    let needGrace=0;
-    const total=subj.ext+subj.internal;
-    if(subj.type==="majorTheory"||subj.type==="minor"){
-      if(subj.ext<25 || total<33) needGrace=Math.min(maxGrace,25-subj.ext);
-    } else if(subj.type==="coCurricular"){
-      if(total<40) needGrace=Math.min(maxGrace,75-subj.ext);
-    }
-    if(needGrace>0 && checkPass(subj,subj.ext+Math.min(needGrace,graceLeft))){
-      const applied=Math.min(needGrace,graceLeft);
-      subj.ext+=applied; subj.grace+=applied;
-      graceLeft-=applied; remainingGraceSubjects--;
+    if(subj.type==="majorTheory"||subj.type==="minor"||subj.type==="coCurricular"){
+      let needGrace=0;
+      const total=subj.ext+subj.internal;
+      if(subj.type==="majorTheory"||subj.type==="minor"){
+        if(subj.ext<25 || total<33) needGrace=Math.min(maxGrace,25-subj.ext);
+      } else if(subj.type==="coCurricular"){
+        if(total<40) needGrace=Math.min(maxGrace,75-subj.ext);
+      }
+      if(needGrace>0 && checkPass(subj,subj.ext+Math.min(needGrace,graceLeft))){
+        const applied=Math.min(needGrace,graceLeft);
+        subj.ext+=applied; subj.grace+=applied;
+        graceLeft-=applied; remainingGraceSubjects--;
+      }
     }
   });
 
   // Step 2: Apply remaining grace to other failing subjects
   subjects.forEach(subj=>{
     if(graceLeft<=0 || remainingGraceSubjects<=0) return;
-    if(subj.grace>0) return;
-    let needGrace=0;
-    const total=subj.ext+subj.internal;
-    if(subj.type==="majorTheory"||subj.type==="minor"){
-      if(subj.ext<25 || total<33) needGrace=Math.min(maxGrace,25-subj.ext);
-    } else if(subj.type==="coCurricular"){
-      if(total<40) needGrace=Math.min(maxGrace,75-subj.ext);
-    }
-    if(needGrace>0){
-      const applied=Math.min(needGrace,graceLeft);
-      subj.ext+=applied; subj.grace+=applied;
-      graceLeft-=applied; remainingGraceSubjects--;
+    if(subj.type==="majorTheory"||subj.type==="minor"||subj.type==="coCurricular"){
+      let needGrace=0;
+      const total=subj.ext+subj.internal;
+      if(subj.type==="majorTheory"||subj.type==="minor"){
+        if(subj.ext<25 || total<33) needGrace=Math.min(maxGrace,25-subj.ext);
+      } else if(subj.type==="coCurricular"){
+        if(total<40) needGrace=Math.min(maxGrace,75-subj.ext);
+      }
+      if(needGrace>0){
+        const applied=Math.min(needGrace,graceLeft);
+        subj.ext+=applied; subj.grace+=applied;
+        graceLeft-=applied; remainingGraceSubjects--;
+      }
     }
   });
 
-  // Check if any subject still fails after grace
-  let anyFailAfterGrace=false;
-  subjects.forEach(subj=>{ if(!checkPass(subj,subj.ext)) anyFailAfterGrace=true; });
+  // Step 3: Check fail after grace
+  let anyFail=false;
+  subjects.forEach(subj=>{
+    if(!checkPass(subj,subj.ext)) anyFail=true;
+  });
 
-  // Populate table
+  // Step 4: Populate table
   subjects.forEach(subj=>{
     const total=subj.ext+subj.internal;
     let status=checkPass(subj,subj.ext)?"Pass":"Fail";
-    if(anyFailAfterGrace && status==="Pass") status="Fail"; // Rule: all fail if any fail
+
+    // Final fail logic
+    if(anyFail && !subj.initialPass) status="Fail"; // Grace fail subjects remain fail
+    if(anyFail && subj.initialPass && checkPass(subj,subj.ext)===true) status="Fail"; // Grace pass subjects fail if anyFail
+
     if(status==="Fail") overallPass=false;
 
     let short=0;
@@ -226,8 +238,8 @@ function calculateResult(){
     tbody.appendChild(tr);
   });
 
-  // Show overall message
-  if(anyFailAfterGrace){
+  // Step 5: Overall Result
+  if(anyFail){
     document.getElementById("overall").innerHTML='Overall Result: <span class="fail">Fail (ग्रेस मिलने के बाद भी यदि किसी भी विषय में बैक रहती है तो किसी भी विषय में ग्रेस नहीं मिलेगा)</span>';
   } else {
     document.getElementById("overall").innerHTML=`Overall Result: <span class="${overallPass?'pass':'fail'}">${overallPass?'PASS':'FAIL'}</span>`;
