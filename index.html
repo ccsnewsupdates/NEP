@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEP Result Calculator</title>
+<style>
+body { font-family: Arial, sans-serif; background:#f7f9fb; padding:20px; }
+h1 { text-align:center; }
+.description { font-weight:bold; text-align:center; margin-bottom:20px; }
+.subject-section { margin-bottom:20px; }
+.subject { margin-bottom:10px; }
+label { display:inline-block; width:200px; }
+input[type=number] { width:60px; margin-right:10px; }
+button { padding:5px 10px; margin-top:10px; cursor:pointer; background:#007BFF; color:#fff; border:none; border-radius:5px; }
+button:hover { background:#0056b3; }
+table { width:100%; border-collapse: collapse; margin-top:20px; }
+th, td { border:1px solid #ccc; padding:8px; text-align:center; }
+th { background:#f0f0f0; }
+.pass { color:green; font-weight:bold; }
+.fail { color:red; font-weight:bold; }
+.grace { color:red; font-weight:bold; }
+#overall { font-size:24px; text-align:center; margin-top:20px; font-weight:bold; }
+</style>
+</head>
+<body>
+
+<h1>NEP Result Calculator</h1>
+<div class="description">
+यह CCS University Meerut की कोई अधिकारिक साईट/ऐप नहीं है। केवल एनईपी रिजल्ट में Grace Marks की गणना करने के लिये व्यक्तिगत रूप से बनाया गया है। यह केवल सूचना मात्र के लिये है। रिजल्ट गणना में त्रुटि सम्भव है।
+</div>
+
+<div class="subject-section" id="majorTheorySection">
+<h2>Major Theory Subjects</h2>
+<div id="majorTheorySubjects"></div>
+<button onclick="addMajorTheory()">Add Major Theory Subject</button>
+</div>
+
+<div class="subject-section" id="majorPracticalSection">
+<h2>Major Practical Subjects</h2>
+<button onclick="addMajorPractical()">Add Major Practical Subject</button>
+<div id="majorPracticalSubjects"></div>
+</div>
+
+<div class="subject-section" id="minorSection">
+<h2>Minor Subjects</h2>
+<button onclick="addMinor()">Add Minor Subject</button>
+<div id="minorSubjects"></div>
+</div>
+
+<div class="subject-section" id="skillSection">
+<h2>Skill Development</h2>
+<button onclick="addSkill()">Add Skill Development Subject</button>
+<div id="skillSubjects"></div>
+</div>
+
+<div class="subject-section" id="coCurricularSection">
+<h2>Co-Curricular Subject</h2>
+<div class="subject">
+<label>Co-Curricular:</label>
+External <input type="number" min="0" max="75" class="coExternal">
+Internal <input type="number" min="0" max="25" class="coInternal">
+</div>
+</div>
+
+<div class="subject-section" id="projectSection">
+<h2>Project</h2>
+<button onclick="addProject()">Add Project</button>
+<div id="projectSubjects"></div>
+</div>
+
+<button onclick="calculateResult()">Calculate Result</button>
+<button onclick="resetForm()">Reset</button>
+
+<table id="resultTable">
+<thead>
+<tr>
+<th>Subject</th>
+<th>External</th>
+<th>Grace</th>
+<th>External after Grace</th>
+<th>Internal</th>
+<th>Total</th>
+<th>Status</th>
+<th>Marks Short of Pass</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<div id="overall"></div>
+
+<script>
+let majorTheoryCount=0, majorPracticalCount=0, minorCount=0, skillCount=0, projectCount=0;
+const maxGrace=5, maxGraceSubjects=3;
+
+// By default 3 major theory subjects
+for(let i=0;i<3;i++) addMajorTheory();
+
+// Functions to add subjects
+function addSubject(containerId,name,extClass,intClass){
+  const container=document.getElementById(containerId);
+  const div=document.createElement("div");
+  div.className="subject";
+  div.innerHTML=`<label>${name}:</label>
+  External <input type="number" class="${extClass}" min="0">`+
+  (intClass?` Internal <input type="number" class="${intClass}" min="0">`:"");
+  container.appendChild(div);
+}
+
+function addMajorTheory(){ majorTheoryCount++; addSubject("majorTheorySubjects","Major Theory "+majorTheoryCount,"majorTheoryExternal","majorTheoryInternal"); }
+function addMajorPractical(){ majorPracticalCount++; addSubject("majorPracticalSubjects","Major Practical "+majorPracticalCount,"majorPracticalExternal","majorPracticalInternal"); }
+function addMinor(){ minorCount++; addSubject("minorSubjects","Minor "+minorCount,"minorExternal","minorInternal"); }
+function addSkill(){ skillCount++; addSubject("skillSubjects","Skill Development "+skillCount,"skillTheory","skillPractical"); }
+function addProject(){ projectCount++; addSubject("projectSubjects","Project "+projectCount,"projectMarks",null); }
+
+function calculateResult(){
+  const tbody=document.querySelector("#resultTable tbody");
+  tbody.innerHTML="";
+  let overallPass=true;
+  let graceLeft=maxGrace, graceSubjectsUsed=0;
+
+  // Gather all subjects
+  let subjects=[];
+  [
+    ["majorTheoryExternal","majorTheoryInternal","majorTheory","Major Theory"],
+    ["majorPracticalExternal","majorPracticalInternal","majorPractical","Major Practical"],
+    ["minorExternal","minorInternal","minor","Minor"],
+    ["skillTheory","skillPractical","skill","Skill Development"],
+    ["projectMarks",null,"project","Project"]
+  ].forEach(([extClass,intClass,type,displayName])=>{
+    const extInputs=document.querySelectorAll("."+extClass);
+    const intInputs=intClass?document.querySelectorAll("."+intClass):[];
+    extInputs.forEach((el,i)=>{
+      const ext=Number(el.value)||0;
+      const intr=intClass?Number(intInputs[i].value)||0:0;
+      if(ext!==0 || intr!==0){
+        subjects.push({name:`${displayName} ${i+1}`,ext,internal:intr,type,grace:0});
+      }
+    });
+  });
+
+  // Co-Curricular
+  const coExt=Number(document.querySelector(".coExternal").value)||0;
+  const coInt=Number(document.querySelector(".coInternal").value)||0;
+  if(coExt || coInt) subjects.push({name:"Co-Curricular",ext:coExt,internal:coInt,type:"coCurricular",grace:0});
+
+  // Check if subject passes
+  function checkPass(subj,extTotal){
+    const total=subj.internal+extTotal;
+    if(subj.type==="majorTheory"||subj.type==="minor") return (extTotal>=25 && total>=33);
+    if(subj.type==="majorPractical") return (extTotal>=25 && total>=33);
+    if(subj.type==="skill"||subj.type==="coCurricular"||subj.type==="project") return total>=40;
+    return false;
+  }
+
+  // Apply grace intelligently
+  let remainingGraceSubjects=maxGraceSubjects;
+
+  // Step 1: Apply grace to subjects which can pass with grace
+  subjects.forEach(subj=>{
+    if(graceLeft<=0 || remainingGraceSubjects<=0) return;
+    if(subj.grace>0) return;
+    let needGrace=0;
+    const total=subj.ext+subj.internal;
+    if(subj.type==="majorTheory"||subj.type==="minor"){
+      if(subj.ext<25 || total<33) needGrace=Math.min(maxGrace,25-subj.ext);
+    } else if(subj.type==="coCurricular"){
+      if(total<40) needGrace=Math.min(maxGrace,75-subj.ext);
+    }
+    if(needGrace>0 && checkPass(subj,subj.ext+Math.min(needGrace,graceLeft))){
+      const applied=Math.min(needGrace,graceLeft);
+      subj.ext+=applied;
+      subj.grace+=applied;
+      graceLeft-=applied;
+      remainingGraceSubjects--;
+    }
+  });
+
+  // Step 2: Apply remaining grace to other failing subjects
+  subjects.forEach(subj=>{
+    if(graceLeft<=0 || remainingGraceSubjects<=0) return;
+    if(subj.grace>0) return;
+    let needGrace=0;
+    const total=subj.ext+subj.internal;
+    if(subj.type==="majorTheory"||subj.type==="minor"){
+      if(subj.ext<25 || total<33) needGrace=Math.min(maxGrace,25-subj.ext);
+    } else if(subj.type==="coCurricular"){
+      if(total<40) needGrace=Math.min(maxGrace,75-subj.ext);
+    }
+    if(needGrace>0){
+      const applied=Math.min(needGrace,graceLeft);
+      subj.ext+=applied;
+      subj.grace+=applied;
+      graceLeft-=applied;
+      remainingGraceSubjects--;
+    }
+  });
+
+  // Populate table
+  subjects.forEach(subj=>{
+    const total=subj.ext+subj.internal;
+    let status=checkPass(subj,subj.ext)?"Pass":"Fail";
+    if(status==="Fail") overallPass=false;
+
+    let short=0;
+    if(status==="Fail"){
+      if(subj.type==="majorTheory"||subj.type==="minor"||subj.type==="majorPractical")
+        short=Math.max(0,33-total,25-(subj.ext-subj.grace));
+      else short=Math.max(0,40-total);
+    }
+
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${subj.name}</td>
+    <td>${subj.ext-subj.grace}</td>
+    <td class="grace">${subj.grace}</td>
+    <td>${subj.ext}</td>
+    <td>${subj.internal}</td>
+    <td>${total}</td>
+    <td class="${status==='Pass'?'pass':'fail'}">${status}</td>
+    <td>${short>0?short:0}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById("overall").innerHTML=`Overall Result: <span class="${overallPass?'pass':'fail'}">${overallPass?'PASS':'FAIL'}</span>`;
+}
+
+function resetForm(){ location.reload(); }
+</script>
+
+</body>
+</html>
