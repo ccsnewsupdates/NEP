@@ -8,19 +8,21 @@
 body { font-family: Arial, sans-serif; background:#f7f9fb; padding:10px; margin:0; }
 h1 { text-align:center; font-size:1.5em; }
 .description { font-weight:bold; text-align:center; margin-bottom:15px; font-size:0.9em; }
-.subject-section { margin-bottom:15px; }
+.subject-section { margin-bottom:15px; border:1px solid #ccc; border-radius:5px; padding:10px; background:#fff; }
 .subject { margin-bottom:8px; display:flex; flex-wrap:wrap; align-items:center; }
 .subject label { width:100%; margin-bottom:5px; font-weight:bold; }
 .subject input[type=number] { width:70px; margin-right:10px; margin-bottom:5px; }
-button { padding:5px 10px; margin:5px 5px 5px 0; cursor:pointer; background:#007BFF; color:#fff; border:none; border-radius:5px; font-size:0.9em; }
-button:hover { background:#0056b3; }
-table { width:100%; border-collapse: collapse; margin-top:15px; font-size:0.85em; }
-th, td { border:1px solid #ccc; padding:6px; text-align:center; }
-th { background:#f0f0f0; font-size:0.8em; }
+button { padding:6px 12px; margin:5px 5px 5px 0; cursor:pointer; background:#007BFF; color:#fff; border:none; border-radius:5px; font-size:0.9em; transition:0.3s; }
+button:hover { background:#0056b3; transform:scale(1.05); }
+table { width:100%; border-collapse: collapse; margin-top:15px; font-size:0.85em; max-width:100%; overflow-x:auto; display:block; }
+thead { background:#f0f0f0; position:sticky; top:0; z-index:1; }
+th, td { border:1px solid #ccc; padding:6px; text-align:center; min-width:60px; }
 .pass { color:green; font-weight:bold; }
 .fail { color:red; font-weight:bold; }
 .grace { color:red; font-weight:bold; }
+.graceApplied { background:#fff0f0; } 
 #overall { font-size:1.2em; text-align:center; margin-top:10px; word-wrap: break-word; font-weight:bold; }
+.collapseContent { display:none; }
 @media(max-width:600px){
   .subject { flex-direction: column; align-items: flex-start; }
   .subject input[type=number] { width:100%; }
@@ -42,22 +44,22 @@ th { background:#f0f0f0; font-size:0.8em; }
 <button onclick="addMajorTheory()">Add Major Theory Subject</button>
 </div>
 
-<div class="subject-section" id="majorPracticalSection">
-<h2>Major Practical Subjects</h2>
+<div class="subject-section">
+<h2 onclick="toggleSection('majorPracticalSubjects')">Major Practical Subjects (Click to Show/Hide)</h2>
+<div id="majorPracticalSubjects" class="collapseContent"></div>
 <button onclick="addMajorPractical()">Add Major Practical Subject</button>
-<div id="majorPracticalSubjects"></div>
 </div>
 
-<div class="subject-section" id="minorSection">
-<h2>Minor Subjects</h2>
+<div class="subject-section">
+<h2 onclick="toggleSection('minorSubjects')">Minor Subjects (Click to Show/Hide)</h2>
+<div id="minorSubjects" class="collapseContent"></div>
 <button onclick="addMinor()">Add Minor Subject</button>
-<div id="minorSubjects"></div>
 </div>
 
-<div class="subject-section" id="skillSection">
-<h2>Skill Development</h2>
+<div class="subject-section">
+<h2 onclick="toggleSection('skillSubjects')">Skill Development (Click to Show/Hide)</h2>
+<div id="skillSubjects" class="collapseContent"></div>
 <button onclick="addSkill()">Add Skill Development Subject</button>
-<div id="skillSubjects"></div>
 </div>
 
 <div class="subject-section" id="coCurricularSection">
@@ -69,10 +71,10 @@ Internal <input type="number" min="0" max="25" class="coInternal">
 </div>
 </div>
 
-<div class="subject-section" id="projectSection">
-<h2>Project</h2>
+<div class="subject-section">
+<h2 onclick="toggleSection('projectSubjects')">Project (Click to Show/Hide)</h2>
+<div id="projectSubjects" class="collapseContent"></div>
 <button onclick="addProject()">Add Project</button>
-<div id="projectSubjects"></div>
 </div>
 
 <button onclick="calculateResult()">Calculate Result</button>
@@ -103,7 +105,13 @@ const maxGrace=5, maxGraceSubjects=3;
 // Default 3 major theory
 for(let i=0;i<3;i++) addMajorTheory();
 
-// Functions to add subjects
+// Collapsible toggle
+function toggleSection(id){
+  const el=document.getElementById(id);
+  el.style.display=(el.style.display==='block')?'none':'block';
+}
+
+// Add Subject Functions
 function addSubject(containerId,name,extClass,intClass){
   const container=document.getElementById(containerId);
   const div=document.createElement("div");
@@ -123,7 +131,6 @@ function addProject(){ projectCount++; addSubject("projectSubjects","Project "+p
 function calculateResult(){
   const tbody=document.querySelector("#resultTable tbody");
   tbody.innerHTML="";
-  let overallPass=true;
   let graceLeft=maxGrace, remainingGraceSubjects=maxGraceSubjects;
 
   // Gather all subjects
@@ -141,7 +148,7 @@ function calculateResult(){
       const ext=Number(el.value)||0;
       const intr=intClass?Number(intInputs[i].value)||0:0;
       if(ext!==0 || intr!==0){
-        subjects.push({name:`${displayName} ${i+1}`,ext,internal:intr,type,grace:0, initialPass: false});
+        subjects.push({name:`${displayName} ${i+1}`,ext,internal:intr,type,grace:0, initialPass:false});
       }
     });
   });
@@ -149,12 +156,12 @@ function calculateResult(){
   // Co-Curricular
   const coExt=Number(document.querySelector(".coExternal").value)||0;
   const coInt=Number(document.querySelector(".coInternal").value)||0;
-  if(coExt || coInt) subjects.push({name:"Co-Curricular",ext:coExt,internal:coInt,type:"coCurricular",grace:0, initialPass:false});
+  if(coExt || coInt) subjects.push({name:"Co-Curricular",ext:coExt,internal:coInt,type:"coCurricular",grace:0,initialPass:false});
 
+  // Check pass function
   function checkPass(subj,extTotal){
     const total=subj.internal+extTotal;
-    if(subj.type==="majorTheory"||subj.type==="minor") return (extTotal>=25 && total>=33);
-    if(subj.type==="majorPractical") return (extTotal>=25 && total>=33);
+    if(subj.type==="majorTheory"||subj.type==="minor"||subj.type==="majorPractical") return (extTotal>=25 && total>=33);
     if(subj.type==="skill"||subj.type==="coCurricular"||subj.type==="project") return total>=40;
     return false;
   }
@@ -175,25 +182,6 @@ function calculateResult(){
       } else if(subj.type==="coCurricular"){
         if(total<40) needGrace=Math.min(maxGrace,75-subj.ext);
       }
-      if(needGrace>0 && checkPass(subj,subj.ext+Math.min(needGrace,graceLeft))){
-        const applied=Math.min(needGrace,graceLeft);
-        subj.ext+=applied; subj.grace+=applied;
-        graceLeft-=applied; remainingGraceSubjects--;
-      }
-    }
-  });
-
-  // Step 2: Apply remaining grace to other failing subjects
-  subjects.forEach(subj=>{
-    if(graceLeft<=0 || remainingGraceSubjects<=0) return;
-    if(subj.type==="majorTheory"||subj.type==="minor"||subj.type==="coCurricular"){
-      let needGrace=0;
-      const total=subj.ext+subj.internal;
-      if(subj.type==="majorTheory"||subj.type==="minor"){
-        if(subj.ext<25 || total<33) needGrace=Math.min(maxGrace,25-subj.ext);
-      } else if(subj.type==="coCurricular"){
-        if(total<40) needGrace=Math.min(maxGrace,75-subj.ext);
-      }
       if(needGrace>0){
         const applied=Math.min(needGrace,graceLeft);
         subj.ext+=applied; subj.grace+=applied;
@@ -202,22 +190,22 @@ function calculateResult(){
     }
   });
 
-  // Step 3: Check fail after grace
-  let anyFail=false;
+  // Step 2: Check if any subject fails after grace
+  let anyFailAfterGrace=false;
   subjects.forEach(subj=>{
-    if(!checkPass(subj,subj.ext)) anyFail=true;
+    if(!checkPass(subj,subj.ext)) anyFailAfterGrace=true;
   });
 
-  // Step 4: Populate table
+  // Step 3: Populate table
   subjects.forEach(subj=>{
     const total=subj.ext+subj.internal;
     let status=checkPass(subj,subj.ext)?"Pass":"Fail";
 
-    // Final fail logic
-    if(anyFail && !subj.initialPass) status="Fail"; // Grace fail subjects remain fail
-    if(anyFail && subj.initialPass && checkPass(subj,subj.ext)===true) status="Fail"; // Grace pass subjects fail if anyFail
+    // Already pass subjects stay pass
+    if(subj.initialPass && subj.grace===0) status="Pass";
 
-    if(status==="Fail") overallPass=false;
+    // Grace invalidation: if any fail after grace, overall fail message, table shows grace
+    if(anyFailAfterGrace && !subj.initialPass && subj.grace>0) status="Fail";
 
     let short=0;
     if(status==="Fail"){
@@ -227,6 +215,7 @@ function calculateResult(){
     }
 
     const tr=document.createElement("tr");
+    tr.className=subj.grace>0?"graceApplied":"";
     tr.innerHTML=`<td>${subj.name}</td>
     <td>${subj.ext-subj.grace}</td>
     <td class="grace">${subj.grace}</td>
@@ -238,12 +227,9 @@ function calculateResult(){
     tbody.appendChild(tr);
   });
 
-  // Step 5: Overall Result
-  if(anyFail){
-    document.getElementById("overall").innerHTML='Overall Result: <span class="fail">Fail (ग्रेस मिलने के बाद भी यदि किसी भी विषय में बैक रहती है तो किसी भी विषय में ग्रेस नहीं मिलेगा)</span>';
-  } else {
-    document.getElementById("overall").innerHTML=`Overall Result: <span class="${overallPass?'pass':'fail'}">${overallPass?'PASS':'FAIL'}</span>`;
-  }
+  // Step 4: Overall Result
+  const failMessage='Fail (ग्रेस मिलने के बाद भी यदि किसी भी विषय में बैक रहती है तो किसी भी विषय में ग्रेस काउन्ट नहीं होगा और जिन विषयों में फेल हो उन सभी की बैक देनी पडेगी)';
+  document.getElementById("overall").innerHTML=anyFailAfterGrace?`Overall Result: <span class="fail">${failMessage}</span>`:`Overall Result: <span class="pass">PASS</span>`;
 }
 
 function resetForm(){ location.reload(); }
