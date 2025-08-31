@@ -3,83 +3,108 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEP Result Calculator</title>
+<title>NEP Result Calculator (with Grace)</title>
 <style>
 body { font-family: Arial, sans-serif; background:#f7f9fb; padding:10px; margin:0; }
-h1 { text-align:center; font-size:1.5em; }
-.description { font-weight:bold; text-align:center; margin-bottom:15px; font-size:0.9em; }
+h1 { text-align:center; font-size:1.4em; margin-bottom:5px; }
+h2 { font-size:1em; margin-top:15px; margin-bottom:8px; }
+.description { text-align:center; margin-bottom:10px; font-size:0.9em; font-weight:bold; }
+.owner { text-align:center; font-size:0.8em; margin-bottom:15px; }
 .subject-section { margin-bottom:15px; border:1px solid #ccc; border-radius:5px; padding:10px; background:#fff; }
 .subject { margin-bottom:8px; display:flex; flex-wrap:wrap; align-items:center; }
 .subject label { width:100%; margin-bottom:5px; font-weight:bold; }
 .subject input[type=number] { width:70px; margin-right:10px; margin-bottom:5px; }
-button { padding:6px 12px; margin:5px 5px 5px 0; cursor:pointer; background:#007BFF; color:#fff; border:none; border-radius:5px; font-size:0.9em; transition:0.3s; }
+button { padding:6px 12px; margin:5px 5px 5px 0; cursor:pointer; background:#007BFF; color:#fff; border:none; border-radius:5px; font-size:0.85em; transition:0.3s; }
 button:hover { background:#0056b3; transform:scale(1.05); }
-table { width:100%; border-collapse: collapse; margin-top:15px; font-size:0.85em; max-width:100%; overflow-x:auto; display:block; }
-thead { background:#f0f0f0; position:sticky; top:0; z-index:1; }
-th, td { border:1px solid #ccc; padding:6px; text-align:center; min-width:60px; }
+table { width:100%; border-collapse: collapse; margin-top:15px; font-size:0.85em; }
+thead { background:#f0f0f0; }
+th, td { border:1px solid #ccc; padding:6px; text-align:center; }
 .pass { color:green; font-weight:bold; }
 .fail { color:red; font-weight:bold; }
 .grace { color:red; font-weight:bold; }
 .graceApplied { background:#fff0f0; } 
-#overall { font-size:1.2em; text-align:center; margin-top:10px; word-wrap: break-word; font-weight:bold; }
+#overall { font-size:1.1em; text-align:center; margin-top:10px; font-weight:bold; }
 .collapseContent { display:none; }
 @media(max-width:600px){
   .subject { flex-direction: column; align-items: flex-start; }
   .subject input[type=number] { width:100%; }
-  table { font-size:0.7em; }
+  table { font-size:0.75em; }
   th, td { padding:4px; }
 }
 </style>
 </head>
 <body>
 
-<h1>NEP Result Calculator</h1>
+<h1>NEP Result Calculator (with Grace)</h1>
 <div class="description">
-यह CCS University Meerut की कोई अधिकारिक साईट/ऐप नहीं है। केवल एनईपी रिजल्ट में Grace Marks की गणना करने के लिये व्यक्तिगत रूप से बनाया गया है। यह केवल सूचना मात्र के लिये है। रिजल्ट गणना में त्रुटि सम्भव है।
+Only for NEP BA, B.Sc, B.Com Students <br><br>
+यह CCS University Meerut की कोई अधिकारिक साईट/ऐप नहीं है। केवल एनईपी 
+रिजल्ट में Grace Marks की गणना करने के लिये व्यक्तिगत रूप से बनाया गया है। 
+यह केवल सूचना मात्र के लिये है। रिजल्ट गणना में त्रुटि सम्भव है।
 </div>
 
-<div class="subject-section" id="majorTheorySection">
-<h2>Major Theory Subjects</h2>
+<div class="owner">
+<b>Aaditya Chaudhary</b> <br>
+Owner <br>
+Telegram Channel: <a href="https://t.me/CCSUniversityMRT" target="_blank">t.me/CCSUniversityMRT</a> 
+<br><br>
+<b>Sanjeev Chauhan</b> <br>
+Owner <br>
+Telegram Channel: <a href="https://t.me/ccsunewsupdates" target="_blank">t.me/ccsunewsupdates</a>
+</div>
+
+<!-- Major Theory -->
+<div class="subject-section">
+<h2>Major Theory Subjects (Enter Marks)</h2>
 <div id="majorTheorySubjects"></div>
-<button onclick="addMajorTheory()">Add Major Theory Subject</button>
+<button onclick="addMajorTheory()">Add More Major Theory Subjects</button>
 </div>
 
+<!-- Major Practical -->
 <div class="subject-section">
-<h2 onclick="toggleSection('majorPracticalSubjects')">Major Practical Subjects (Click to Show/Hide)</h2>
-<div id="majorPracticalSubjects" class="collapseContent"></div>
-<button onclick="addMajorPractical()">Add Major Practical Subject</button>
+<h2>Major Practical Subjects (Click to Add)</h2>
+<div id="majorPracticalSubjects"></div>
+<button onclick="addMajorPractical()">Add Major Practical Subjects</button>
 </div>
 
+<!-- Minor -->
 <div class="subject-section">
-<h2 onclick="toggleSection('minorSubjects')">Minor Subjects (Click to Show/Hide)</h2>
-<div id="minorSubjects" class="collapseContent"></div>
-<button onclick="addMinor()">Add Minor Subject</button>
+<h2>Minor Subject (Click to Add)</h2>
+<div id="minorSubjects"></div>
+<button onclick="addMinor()">Add Minor Subjects</button>
 </div>
 
+<!-- Skill -->
 <div class="subject-section">
-<h2 onclick="toggleSection('skillSubjects')">Skill Development (Click to Show/Hide)</h2>
-<div id="skillSubjects" class="collapseContent"></div>
-<button onclick="addSkill()">Add Skill Development Subject</button>
+<h2>Skill Development (Click to Add)</h2>
+<div id="skillSubjects"></div>
+<button onclick="addSkill()">Add Skill Development</button>
 </div>
 
-<div class="subject-section" id="coCurricularSection">
-<h2>Co-Curricular Subject</h2>
+<!-- Co-Curricular -->
+<div class="subject-section">
+<h2>Co-Curricular (Enter Marks)</h2>
 <div class="subject">
-<label>Co-Curricular:</label>
+<label>Co-Curricular 1:</label>
 External <input type="number" min="0" max="75" class="coExternal">
 Internal <input type="number" min="0" max="25" class="coInternal">
 </div>
 </div>
 
+<!-- Project -->
 <div class="subject-section">
-<h2 onclick="toggleSection('projectSubjects')">Project (Click to Show/Hide)</h2>
-<div id="projectSubjects" class="collapseContent"></div>
+<h2>Project (Click to Add)</h2>
+<div id="projectSubjects"></div>
 <button onclick="addProject()">Add Project</button>
 </div>
 
+<!-- Action Buttons -->
+<div style="text-align:center; margin-top:10px;">
 <button onclick="calculateResult()">Calculate Result</button>
 <button onclick="resetForm()">Reset</button>
+</div>
 
+<!-- Result Table -->
 <table id="resultTable">
 <thead>
 <tr>
@@ -102,39 +127,42 @@ Internal <input type="number" min="0" max="25" class="coInternal">
 let majorTheoryCount=0, majorPracticalCount=0, minorCount=0, skillCount=0, projectCount=0;
 const maxGrace=5, maxGraceSubjects=3;
 
-// Default 3 major theory
+// Default 3 Major Theory
 for(let i=0;i<3;i++) addMajorTheory();
 
-// Collapsible toggle
-function toggleSection(id){
-  const el=document.getElementById(id);
-  el.style.display=(el.style.display==='block')?'none':'block';
-}
-
-// Add Subject Functions
-function addSubject(containerId,name,extClass,intClass){
+function addSubject(containerId,name,extClass,intClass,label1="External",label2="Internal"){
   const container=document.getElementById(containerId);
+  container.style.display="block";
   const div=document.createElement("div");
   div.className="subject";
   div.innerHTML=`<label>${name}:</label>
-  External <input type="number" class="${extClass}" min="0">`+
-  (intClass?` Internal <input type="number" class="${intClass}" min="0">`:"");
+  ${label1} <input type="number" class="${extClass}" min="0">`+
+  (intClass?` ${label2} <input type="number" class="${intClass}" min="0">`:"");
   container.appendChild(div);
 }
 
 function addMajorTheory(){ majorTheoryCount++; addSubject("majorTheorySubjects","Major Theory "+majorTheoryCount,"majorTheoryExternal","majorTheoryInternal"); }
 function addMajorPractical(){ majorPracticalCount++; addSubject("majorPracticalSubjects","Major Practical "+majorPracticalCount,"majorPracticalExternal","majorPracticalInternal"); }
 function addMinor(){ minorCount++; addSubject("minorSubjects","Minor "+minorCount,"minorExternal","minorInternal"); }
-function addSkill(){ skillCount++; addSubject("skillSubjects","Skill Development "+skillCount,"skillTheory","skillPractical"); }
-function addProject(){ projectCount++; addSubject("projectSubjects","Project "+projectCount,"projectMarks",null); }
+
+// Skill Development = Theory + Practical
+function addSkill(){ 
+  skillCount++; 
+  addSubject("skillSubjects","Skill Development "+skillCount,"skillTheory","skillPractical","Theory","Practical"); 
+}
+
+// Project = Only Total
+function addProject(){ 
+  projectCount++; 
+  addSubject("projectSubjects","Project "+projectCount,"projectMarks",null,"Total",""); 
+}
 
 function calculateResult(){
   const tbody=document.querySelector("#resultTable tbody");
   tbody.innerHTML="";
   let graceLeft=maxGrace, remainingGraceSubjects=maxGraceSubjects;
-
-  // Gather all subjects
   let subjects=[];
+
   [
     ["majorTheoryExternal","majorTheoryInternal","majorTheory","Major Theory"],
     ["majorPracticalExternal","majorPracticalInternal","majorPractical","Major Practical"],
@@ -153,12 +181,10 @@ function calculateResult(){
     });
   });
 
-  // Co-Curricular
   const coExt=Number(document.querySelector(".coExternal").value)||0;
   const coInt=Number(document.querySelector(".coInternal").value)||0;
   if(coExt || coInt) subjects.push({name:"Co-Curricular",ext:coExt,internal:coInt,type:"coCurricular",grace:0,initialPass:false});
 
-  // Check pass function
   function checkPass(subj,extTotal){
     const total=subj.internal+extTotal;
     if(subj.type==="majorTheory"||subj.type==="minor"||subj.type==="majorPractical") return (extTotal>=25 && total>=33);
@@ -166,12 +192,8 @@ function calculateResult(){
     return false;
   }
 
-  // Record initial pass/fail
-  subjects.forEach(subj=>{
-    subj.initialPass = checkPass(subj,subj.ext);
-  });
+  subjects.forEach(subj=>{ subj.initialPass = checkPass(subj,subj.ext); });
 
-  // Step 1: Apply grace to eligible subjects that can pass with grace
   subjects.forEach(subj=>{
     if(graceLeft<=0 || remainingGraceSubjects<=0) return;
     if(subj.type==="majorTheory"||subj.type==="minor"||subj.type==="coCurricular"){
@@ -190,21 +212,13 @@ function calculateResult(){
     }
   });
 
-  // Step 2: Check if any subject fails after grace
   let anyFailAfterGrace=false;
-  subjects.forEach(subj=>{
-    if(!checkPass(subj,subj.ext)) anyFailAfterGrace=true;
-  });
+  subjects.forEach(subj=>{ if(!checkPass(subj,subj.ext)) anyFailAfterGrace=true; });
 
-  // Step 3: Populate table
   subjects.forEach(subj=>{
     const total=subj.ext+subj.internal;
     let status=checkPass(subj,subj.ext)?"Pass":"Fail";
-
-    // Already pass subjects stay pass
     if(subj.initialPass && subj.grace===0) status="Pass";
-
-    // Grace invalidation: if any fail after grace, overall fail message, table shows grace
     if(anyFailAfterGrace && !subj.initialPass && subj.grace>0) status="Fail";
 
     let short=0;
@@ -227,8 +241,7 @@ function calculateResult(){
     tbody.appendChild(tr);
   });
 
-  // Step 4: Overall Result
-  const failMessage='Fail (ग्रेस मिलने के बाद भी यदि किसी भी विषय में बैक रहती है तो किसी भी विषय में ग्रेस काउन्ट नहीं होगा और जिन विषयों में फेल हो उन सभी की बैक देनी पडेगी)';
+  const failMessage='Fail (ग्रेस मिलने के बाद भी यदि किसी भी विषय में बैक रहती है तो किसी भी विषय में ग्रेस नहीं मिलेगा)';
   document.getElementById("overall").innerHTML=anyFailAfterGrace?`Overall Result: <span class="fail">${failMessage}</span>`:`Overall Result: <span class="pass">PASS</span>`;
 }
 
