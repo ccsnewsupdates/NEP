@@ -13,6 +13,8 @@ h2 { font-size:1em; margin-top:15px; margin-bottom:8px; cursor:pointer; }
 .owner { text-align:center; font-size:0.85em; margin-bottom:15px; }
 .owner b { color:red; font-size:1em; }
 .owner small { font-size:0.75em; display:block; }
+.rules { border:1px solid #ccc; background:#fff; padding:10px; margin-bottom:15px; border-radius:5px; }
+.rules ul { margin:0; padding-left:20px; font-size:0.85em; line-height:1.5; }
 .subject-section { margin-bottom:15px; border:1px solid #ccc; border-radius:5px; padding:10px; background:#fff; }
 .subject { margin-bottom:8px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
 .subject label { min-width:120px; font-weight:bold; margin-bottom:0; }
@@ -28,10 +30,25 @@ th, td { border:1px solid #ccc; padding:6px; text-align:center; }
 .graceApplied { background:#fff0f0; } 
 #overall { font-size:1.1em; text-align:center; margin-top:10px; font-weight:bold; }
 #note { margin-top:20px; font-size:0.8em; text-align:center; color:#333; }
-@media(max-width:600px){
-  .subject input[type=number] { width:40px; }
-  table { font-size:0.75em; }
-  th, td { padding:4px; }
+
+/* ✅ Grade Card light yellow */
+#gradeCard {
+  background: #fffde7;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+/* Tablet */
+@media(min-width:768px) and (max-width:1024px){
+  .subject label { min-width:150px; }
+  .subject input[type=number]{ width:55px; }
+  table { font-size:0.9em; }
+}
+/* Laptop/Desktop */
+@media(min-width:1025px){
+  .subject label { min-width:200px; }
+  .subject input[type=number]{ width:60px; }
+  table { font-size:1em; }
 }
 </style>
 </head>
@@ -57,6 +74,18 @@ Join Telegram Channel: <a href="https://t.me/CCSUniversityMRT" target="_blank">t
 <b>Aaditya Chaudhary</b> <small>Owner</small>
 </div>
 
+<!-- Grace Rules -->
+<div class="rules">
+<h2>Grace Rules</h2>
+<ul>
+<li>किसी भी student को maximum 5 marks तक Grace मिल सकता है।</li>
+<li>Grace ज़्यादा से ज़्यादा 3 subjects में दिया जाएगा।</li>
+<li>Major Theory / Minor / Practical subjects में पास होने के लिए External कम से कम 25 और Total कम से कम 33 होना चाहिए।</li>
+<li>Skill / Project / Co-Curricular subjects में पास होने के लिए Total कम से कम 40 होना चाहिए।</li>
+<li>अगर किसी भी subject में fail रह जाते हैं तो किसी भी subject में दिया गया Grace cancel हो जाएगा।</li>
+</ul>
+</div>
+
 <!-- Semester Selection -->
 <div class="subject-section">
 <h2>Select Semester</h2>
@@ -71,100 +100,102 @@ Join Telegram Channel: <a href="https://t.me/CCSUniversityMRT" target="_blank">t
 </select>
 </div>
 
-<!-- Major Theory -->
-<div class="subject-section">
-<h2>Major Theory Subjects</h2>
-<div id="majorTheorySubjects"></div>
-<button onclick="addMajorTheory()">Add Major Theory</button>
-</div>
+<!-- Marks Section -->
+<div id="marksSection" style="display:none;">
 
-<!-- Major Practical -->
-<div class="subject-section">
-<h2>Major Practical Subjects</h2>
-<div id="majorPracticalSubjects"></div>
-<button onclick="addMajorPractical()">Add Major Practical</button>
-</div>
+  <!-- Semester Title (for Grade Card) -->
+  <div id="semTitle" style="text-align:center; font-weight:bold; font-size:1.1em; margin-bottom:10px;"></div>
 
-<!-- Minor -->
-<div class="subject-section" id="minorSection">
-<h2>Minor Subjects</h2>
-<div id="minorSubjects"></div>
-<button onclick="addMinor()">Add Minor Subject</button>
-</div>
+  <!-- Major Theory -->
+  <div class="subject-section">
+  <h2>Major Theory Subjects</h2>
+  <div id="majorTheorySubjects"></div>
+  <button onclick="addMajorTheory()">Add Major Theory</button>
+  </div>
 
-<!-- Skill -->
-<div class="subject-section" id="skillSection">
-<h2>Skill Development</h2>
-<div id="skillSubjects"></div>
-<button onclick="addSkill()">Add Skill Development</button>
-</div>
+  <!-- Major Practical -->
+  <div class="subject-section">
+  <h2>Major Practical Subjects</h2>
+  <div id="majorPracticalSubjects"></div>
+  <button onclick="addMajorPractical()">Add Major Practical</button>
+  </div>
 
-<!-- Co-Curricular -->
-<div class="subject-section">
-<h2>Co-Curricular</h2>
-<div class="subject">
-<label>Co-Curricular:</label>
-EXT <input type="number" min="0" max="99" class="coExternal">
-INT <input type="number" min="0" max="99" class="coInternal">
-</div>
-</div>
+  <!-- Minor -->
+  <div class="subject-section" id="minorSection">
+  <h2>Minor Subjects</h2>
+  <div id="minorSubjects"></div>
+  <button onclick="addMinor()">Add Minor Subject</button>
+  </div>
 
-<!-- Project -->
-<div class="subject-section" id="projectSection" style="display:none;">
-<h2>Project</h2>
-<div id="projectSubjects"></div>
-<button onclick="addProject()">Add Project</button>
-</div>
+  <!-- Skill -->
+  <div class="subject-section" id="skillSection">
+  <h2>Skill Development</h2>
+  <div id="skillSubjects"></div>
+  <button onclick="addSkill()">Add Skill Development</button>
+  </div>
 
-<!-- Action Buttons -->
-<div style="text-align:center; margin-top:10px;">
-<button onclick="calculateResult()">Calculate Result</button>
-<button onclick="resetForm()">Reset</button>
-<button onclick="downloadPDF()">Download Grade Card (PDF)</button>
-</div>
+  <!-- Co-Curricular -->
+  <div class="subject-section">
+  <h2>Co-Curricular</h2>
+  <div class="subject">
+  <label>Co-Curricular:</label>
+  EXT <input type="number" min="0" max="99" class="coExternal">
+  INT <input type="number" min="0" max="99" class="coInternal">
+  </div>
+  </div>
 
-<!-- Result Table -->
-<div id="gradeCard">
-<table id="resultTable">
-<thead>
-<tr>
-<th>Subject</th>
-<th>External</th>
-<th>Grace</th>
-<th>External after Grace</th>
-<th>Internal</th>
-<th>Total</th>
-<th>Status</th>
-<th>Marks Short of Pass</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-<div id="overall"></div>
-<div id="note">This result is only for information purpose. Not valid to use for Admission or other activities</div>
+  <!-- Project -->
+  <div class="subject-section" id="projectSection" style="display:none;">
+  <h2>Project</h2>
+  <div id="projectSubjects"></div>
+  <button onclick="addProject()">Add Project</button>
+  </div>
+
+  <!-- Action Buttons -->
+  <div style="text-align:center; margin-top:10px;">
+  <button onclick="calculateResult()">Calculate Result</button>
+  <button onclick="resetForm()">Reset</button>
+  <button onclick="downloadPDF()">Download Grade Card (PDF)</button>
+  </div>
+
+  <!-- Result Table -->
+  <div id="gradeCard">
+  <table id="resultTable">
+  <thead>
+  <tr>
+  <th>Subject</th>
+  <th>External</th>
+  <th>Grace</th>
+  <th>External after Grace</th>
+  <th>Internal</th>
+  <th>Total</th>
+  <th>Status</th>
+  <th>Remarks</th>
+  </tr>
+  </thead>
+  <tbody></tbody>
+  </table>
+  <div id="overall"></div>
+  <div id="note">This result is only for information purpose. Not valid to use for Admission or other activities</div>
+  </div>
+
 </div>
 
 <script>
 let majorTheoryCount=0, majorPracticalCount=0, minorCount=0, skillCount=0, projectCount=0;
 const maxGrace=5, maxGraceSubjects=3;
-
-// default 3 major theory
 for(let i=0;i<3;i++) addMajorTheory();
 
 function semesterChange(){
   let sem=document.getElementById("semester").value;
-  if(sem==="5" || sem==="6"){
-    document.getElementById("minorSection").style.display="none";
-    document.getElementById("skillSection").style.display="none";
-  } else {
-    document.getElementById("minorSection").style.display="block";
-    document.getElementById("skillSection").style.display="block";
-  }
-  if(sem==="6"){
-    document.getElementById("projectSection").style.display="block";
-  } else {
-    document.getElementById("projectSection").style.display="none";
-  }
+  let semTitle=document.getElementById("semTitle");
+  if(sem===""){ document.getElementById("marksSection").style.display="none"; return; }
+  document.getElementById("marksSection").style.display="block";
+  semTitle.innerHTML="Semester: "+sem;
+  if(sem==="5" || sem==="6"){ document.getElementById("minorSection").style.display="none"; document.getElementById("skillSection").style.display="none"; }
+  else { document.getElementById("minorSection").style.display="block"; document.getElementById("skillSection").style.display="block"; }
+  if(sem==="6"){ document.getElementById("projectSection").style.display="block"; }
+  else { document.getElementById("projectSection").style.display="none"; }
 }
 
 function addSubject(containerId,name,extClass,intClass,label1="EXT",label2="INT"){
@@ -177,7 +208,6 @@ function addSubject(containerId,name,extClass,intClass,label1="EXT",label2="INT"
   (intClass?` ${label2} <input type="number" class="${intClass}" min="0" max="99">`:"");
   container.appendChild(div);
 }
-
 function addMajorTheory(){ majorTheoryCount++; addSubject("majorTheorySubjects","Major Theory "+majorTheoryCount,"majorTheoryExternal","majorTheoryInternal"); }
 function addMajorPractical(){ majorPracticalCount++; addSubject("majorPracticalSubjects","Major Practical "+majorPracticalCount,"majorPracticalExternal","majorPracticalInternal"); }
 function addMinor(){ minorCount++; addSubject("minorSubjects","Minor "+minorCount,"minorExternal","minorInternal"); }
@@ -190,21 +220,14 @@ function calculateResult(){
   const coExt=document.querySelector(".coExternal").value;
   const coInt=document.querySelector(".coInternal").value;
   let mandatoryOk=true;
-
   if(majors.length<3){ mandatoryOk=false; }
-  else {
-    for(let i=0;i<3;i++){
-      if((majors[i].value==="" || majorInternals[i].value==="")) mandatoryOk=false;
-    }
-  }
+  else { for(let i=0;i<3;i++){ if((majors[i].value==="" || majorInternals[i].value==="")) mandatoryOk=false; } }
   if(coExt==="" || coInt==="") mandatoryOk=false;
   if(!mandatoryOk){ alert("Plz Enter Marks of All Subjects"); return; }
 
-  const tbody=document.querySelector("#resultTable tbody");
-  tbody.innerHTML="";
+  const tbody=document.querySelector("#resultTable tbody"); tbody.innerHTML="";
   let graceLeft=maxGrace, remainingGraceSubjects=maxGraceSubjects;
   let subjects=[];
-
   [
     ["majorTheoryExternal","majorTheoryInternal","majorTheory","Major Theory"],
     ["majorPracticalExternal","majorPracticalInternal","majorPractical","Major Practical"],
@@ -217,13 +240,9 @@ function calculateResult(){
     extInputs.forEach((el,i)=>{
       const ext=Number(el.value)||0;
       const intr=intClass?Number(intInputs[i].value)||0:0;
-      if(ext!==0 || intr!==0){
-        subjects.push({name:`${displayName} ${i+1}`,ext,internal:intr,type,grace:0, initialPass:false});
-      }
+      if(ext!==0 || intr!==0){ subjects.push({name:`${displayName} ${i+1}`,ext,internal:intr,type,grace:0, initialPass:false}); }
     });
   });
-
-  // Co-curricular
   const coE=Number(document.querySelector(".coExternal").value)||0;
   const coI=Number(document.querySelector(".coInternal").value)||0;
   if(coE || coI) subjects.push({name:"Co-Curricular",ext:coE,internal:coI,type:"coCurricular",grace:0,initialPass:false});
@@ -234,70 +253,58 @@ function calculateResult(){
     if(subj.type==="skill"||subj.type==="coCurricular"||subj.type==="project") return total>=40;
     return false;
   }
-
   subjects.forEach(subj=>{ subj.initialPass = checkPass(subj,subj.ext); });
-
   subjects.forEach(subj=>{
     if(graceLeft<=0 || remainingGraceSubjects<=0) return;
-    let total=subj.ext+subj.internal;
-    let needGrace=0;
+    let total=subj.ext+subj.internal; let needGrace=0;
     if(subj.type==="majorTheory"||subj.type==="minor"||subj.type==="majorPractical"){
       if(subj.ext<25){ needGrace=25-subj.ext; }
       if(needGrace===0 && total<33 && subj.ext>=25){ needGrace=33-total; }
-    } else if(subj.type==="skill"||subj.type==="coCurricular"||subj.type==="project"){
-      if(total<40){ needGrace=40-total; }
-    }
-    if(needGrace>0){
-      const applied=Math.min(needGrace,graceLeft,maxGrace);
-      subj.ext+=applied; subj.grace+=applied;
-      graceLeft-=applied; remainingGraceSubjects--;
-    }
+    } else if(subj.type==="skill"||subj.type==="coCurricular"||subj.type==="project"){ if(total<40){ needGrace=40-total; } }
+    if(needGrace>0){ const applied=Math.min(needGrace,graceLeft,maxGrace); subj.ext+=applied; subj.grace+=applied; graceLeft-=applied; remainingGraceSubjects--; }
   });
 
-  let anyFailAfterGrace=false;
-  subjects.forEach(subj=>{ if(!checkPass(subj,subj.ext)) anyFailAfterGrace=true; });
-
+  let anyFailAfterGrace=false; subjects.forEach(subj=>{ if(!checkPass(subj,subj.ext)) anyFailAfterGrace=true; });
   subjects.forEach(subj=>{
     const total=subj.ext+subj.internal;
     let status=checkPass(subj,subj.ext)?"Pass":"Fail";
     if(subj.initialPass && subj.grace===0) status="Pass";
     if(anyFailAfterGrace && !subj.initialPass && subj.grace>0) status="Fail";
-    let short=0;
+    let remark="";
     if(status==="Fail"){
       if(subj.type==="majorTheory"||subj.type==="minor"||subj.type==="majorPractical"){
-        short=Math.max(0,33-total,25-(subj.ext-subj.grace));
-      } else { short=Math.max(0,40-total); }
+        if(subj.ext<25) remark=`Need ${25-(subj.ext)} more marks in External`;
+        else if(total<33) remark=`Need ${33-total} more marks in Total`;
+      } else { remark=`Need ${40-total} more marks in Total`; }
+    } else { remark="OK"; }
+
+    if(anyFailAfterGrace && subj.grace>0){
+      remark = `Grace Mark(s) Cancelled - ${remark}`;
     }
+
     const tr=document.createElement("tr");
     tr.className=subj.grace>0?"graceApplied":"";
-    tr.innerHTML=`<td>${subj.name}</td>
-    <td>${subj.ext-subj.grace}</td>
-    <td class="grace">${subj.grace}</td>
-    <td>${subj.ext}</td>
-    <td>${subj.internal}</td>
-    <td>${total}</td>
-    <td class="${status==='Pass'?'pass':'fail'}">${status}</td>
-    <td>${short>0?short:0}</td>`;
+    tr.innerHTML=`<td>${subj.name}</td><td>${subj.ext-subj.grace}</td><td class="grace">${subj.grace}</td><td>${subj.ext}</td><td>${subj.internal}</td><td>${total}</td><td class="${status==='Pass'?'pass':'fail'}">${status}</td><td>${remark}</td>`;
     tbody.appendChild(tr);
   });
 
-  const failMessage='Fail (ग्रेस मिलने के बाद भी यदि किसी भी विषय में बैक रहती है तो किसी भी विषय में ग्रेस नहीं मिलेगा)';
-  document.getElementById("overall").innerHTML=anyFailAfterGrace
-    ? `Overall Result: <span class="fail">${failMessage}</span>`
-    : `Overall Result: <span class="pass">PASS</span>`;
+  let totalGraceApplied = subjects.reduce((sum,subj)=>sum+subj.grace,0);
+  if(anyFailAfterGrace){
+    const failMessage='Fail (ग्रेस मिलने के बाद भी यदि किसी भी विषय में बैक रहती है तो किसी भी विषय में ग्रेस नहीं मिलेगा)';
+    document.getElementById("overall").innerHTML=`Overall Result: <span class="fail">${failMessage}</span>`;
+  } else {
+    if(totalGraceApplied>0){
+      document.getElementById("overall").innerHTML=`Overall Result: <span class="pass">PASS with Grace - ${totalGraceApplied}</span>`;
+    } else {
+      document.getElementById("overall").innerHTML=`Overall Result: <span class="pass">PASS</span>`;
+    }
+  }
 }
 
 function resetForm(){ location.reload(); }
-
 function downloadPDF(){
   const element=document.getElementById("gradeCard");
-  const opt={
-    margin:0.5,
-    filename:'GradeCard.pdf',
-    image:{type:'jpeg',quality:0.98},
-    html2canvas:{scale:2},
-    jsPDF:{unit:'in',format:'a4',orientation:'portrait'}
-  };
+  const opt={ margin:0.5, filename:'GradeCard.pdf', image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2}, jsPDF:{unit:'in',format:'a4',orientation:'portrait'} };
   html2pdf().set(opt).from(element).save();
 }
 </script>
