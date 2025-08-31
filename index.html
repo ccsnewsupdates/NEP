@@ -4,16 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEP Result Calculator (with Grace)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 <style>
 body { font-family: Arial, sans-serif; background:#f7f9fb; padding:10px; margin:0; }
 h1 { text-align:center; font-size:1.4em; margin-bottom:5px; }
-h2 { font-size:1em; margin-top:15px; margin-bottom:8px; }
+h2 { font-size:1em; margin-top:15px; margin-bottom:8px; cursor:pointer; }
 .description { text-align:center; margin-bottom:10px; font-size:0.9em; font-weight:bold; }
-.owner { text-align:center; font-size:0.8em; margin-bottom:15px; }
+.owner { text-align:center; font-size:0.85em; margin-bottom:15px; }
+.owner b { color:red; font-size:1em; }
+.owner small { font-size:0.75em; display:block; }
 .subject-section { margin-bottom:15px; border:1px solid #ccc; border-radius:5px; padding:10px; background:#fff; }
-.subject { margin-bottom:8px; display:flex; flex-wrap:wrap; align-items:center; }
-.subject label { width:100%; margin-bottom:5px; font-weight:bold; }
-.subject input[type=number] { width:70px; margin-right:10px; margin-bottom:5px; }
+.subject { margin-bottom:8px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.subject label { min-width:120px; font-weight:bold; margin-bottom:0; }
+.subject input[type=number] { width:45px; text-align:center; }
 button { padding:6px 12px; margin:5px 5px 5px 0; cursor:pointer; background:#007BFF; color:#fff; border:none; border-radius:5px; font-size:0.85em; transition:0.3s; }
 button:hover { background:#0056b3; transform:scale(1.05); }
 table { width:100%; border-collapse: collapse; margin-top:15px; font-size:0.85em; }
@@ -24,10 +27,9 @@ th, td { border:1px solid #ccc; padding:6px; text-align:center; }
 .grace { color:red; font-weight:bold; }
 .graceApplied { background:#fff0f0; } 
 #overall { font-size:1.1em; text-align:center; margin-top:10px; font-weight:bold; }
-.collapseContent { display:none; }
+#note { margin-top:20px; font-size:0.8em; text-align:center; color:#333; }
 @media(max-width:600px){
-  .subject { flex-direction: column; align-items: flex-start; }
-  .subject input[type=number] { width:100%; }
+  .subject input[type=number] { width:40px; }
   table { font-size:0.75em; }
   th, td { padding:4px; }
 }
@@ -44,56 +46,72 @@ Only for NEP BA, B.Sc, B.Com Students <br><br>
 </div>
 
 <div class="owner">
-<b>Aaditya Chaudhary</b> <br>
-Owner <br>
-Telegram Channel: <a href="https://t.me/CCSUniversityMRT" target="_blank">t.me/CCSUniversityMRT</a> 
-<br><br>
-<b>Sanjeev Chauhan</b> <br>
-Owner <br>
-Telegram Channel: <a href="https://t.me/ccsnewsupdates" target="_blank">t.me/ccsunewsupdates</a>
+CCS University Meerut & SSV College Hapur Updates <br>
+Join Telegram Channel: <a href="https://t.me/ccsnewsupdates" target="_blank">t.me/ccsnewsupdates</a><br>
+<b>Sanjeev Chauhan</b> <small>Owner</small>
+</div>
+
+<div class="owner">
+CCS University Meerut & Other Colleges Updates <br>
+Join Telegram Channel: <a href="https://t.me/CCSUniversityMRT" target="_blank">t.me/CCSUniversityMRT</a><br>
+<b>Aaditya Chaudhary</b> <small>Owner</small>
+</div>
+
+<!-- Semester Selection -->
+<div class="subject-section">
+<h2>Select Semester</h2>
+<select id="semester" onchange="semesterChange()">
+  <option value="">--Select Semester--</option>
+  <option value="1">1st Semester</option>
+  <option value="2">2nd Semester</option>
+  <option value="3">3rd Semester</option>
+  <option value="4">4th Semester</option>
+  <option value="5">5th Semester</option>
+  <option value="6">6th Semester</option>
+</select>
 </div>
 
 <!-- Major Theory -->
 <div class="subject-section">
-<h2>Major Theory Subjects (Enter Marks)</h2>
+<h2>Major Theory Subjects</h2>
 <div id="majorTheorySubjects"></div>
-<button onclick="addMajorTheory()">Add More Major Theory Subjects</button>
+<button onclick="addMajorTheory()">Add Major Theory</button>
 </div>
 
 <!-- Major Practical -->
 <div class="subject-section">
-<h2>Major Practical Subjects (Click to Add)</h2>
+<h2>Major Practical Subjects</h2>
 <div id="majorPracticalSubjects"></div>
-<button onclick="addMajorPractical()">Add Major Practical Subjects</button>
+<button onclick="addMajorPractical()">Add Major Practical</button>
 </div>
 
 <!-- Minor -->
-<div class="subject-section">
-<h2>Minor Subject (Click to Add)</h2>
+<div class="subject-section" id="minorSection">
+<h2>Minor Subjects</h2>
 <div id="minorSubjects"></div>
-<button onclick="addMinor()">Add Minor Subjects</button>
+<button onclick="addMinor()">Add Minor Subject</button>
 </div>
 
 <!-- Skill -->
-<div class="subject-section">
-<h2>Skill Development (Click to Add)</h2>
+<div class="subject-section" id="skillSection">
+<h2>Skill Development</h2>
 <div id="skillSubjects"></div>
 <button onclick="addSkill()">Add Skill Development</button>
 </div>
 
 <!-- Co-Curricular -->
 <div class="subject-section">
-<h2>Co-Curricular (Enter Marks)</h2>
+<h2>Co-Curricular</h2>
 <div class="subject">
-<label>Co-Curricular 1:</label>
-External <input type="number" min="0" max="75" class="coExternal">
-Internal <input type="number" min="0" max="25" class="coInternal">
+<label>Co-Curricular:</label>
+EXT <input type="number" min="0" max="99" class="coExternal">
+INT <input type="number" min="0" max="99" class="coInternal">
 </div>
 </div>
 
 <!-- Project -->
-<div class="subject-section">
-<h2>Project (Click to Add)</h2>
+<div class="subject-section" id="projectSection" style="display:none;">
+<h2>Project</h2>
 <div id="projectSubjects"></div>
 <button onclick="addProject()">Add Project</button>
 </div>
@@ -102,9 +120,11 @@ Internal <input type="number" min="0" max="25" class="coInternal">
 <div style="text-align:center; margin-top:10px;">
 <button onclick="calculateResult()">Calculate Result</button>
 <button onclick="resetForm()">Reset</button>
+<button onclick="downloadPDF()">Download Grade Card (PDF)</button>
 </div>
 
 <!-- Result Table -->
+<div id="gradeCard">
 <table id="resultTable">
 <thead>
 <tr>
@@ -120,44 +140,66 @@ Internal <input type="number" min="0" max="25" class="coInternal">
 </thead>
 <tbody></tbody>
 </table>
-
 <div id="overall"></div>
+<div id="note">This result is only for information purpose. Not valid to use for Admission or other activities</div>
+</div>
 
 <script>
 let majorTheoryCount=0, majorPracticalCount=0, minorCount=0, skillCount=0, projectCount=0;
 const maxGrace=5, maxGraceSubjects=3;
 
-// Default 3 Major Theory
+// default 3 major theory
 for(let i=0;i<3;i++) addMajorTheory();
 
-function addSubject(containerId,name,extClass,intClass,label1="External",label2="Internal"){
+function semesterChange(){
+  let sem=document.getElementById("semester").value;
+  if(sem==="5" || sem==="6"){
+    document.getElementById("minorSection").style.display="none";
+    document.getElementById("skillSection").style.display="none";
+  } else {
+    document.getElementById("minorSection").style.display="block";
+    document.getElementById("skillSection").style.display="block";
+  }
+  if(sem==="6"){
+    document.getElementById("projectSection").style.display="block";
+  } else {
+    document.getElementById("projectSection").style.display="none";
+  }
+}
+
+function addSubject(containerId,name,extClass,intClass,label1="EXT",label2="INT"){
   const container=document.getElementById(containerId);
   container.style.display="block";
   const div=document.createElement("div");
   div.className="subject";
   div.innerHTML=`<label>${name}:</label>
-  ${label1} <input type="number" class="${extClass}" min="0">`+
-  (intClass?` ${label2} <input type="number" class="${intClass}" min="0">`:"");
+  ${label1} <input type="number" class="${extClass}" min="0" max="99">`+
+  (intClass?` ${label2} <input type="number" class="${intClass}" min="0" max="99">`:"");
   container.appendChild(div);
 }
 
 function addMajorTheory(){ majorTheoryCount++; addSubject("majorTheorySubjects","Major Theory "+majorTheoryCount,"majorTheoryExternal","majorTheoryInternal"); }
 function addMajorPractical(){ majorPracticalCount++; addSubject("majorPracticalSubjects","Major Practical "+majorPracticalCount,"majorPracticalExternal","majorPracticalInternal"); }
 function addMinor(){ minorCount++; addSubject("minorSubjects","Minor "+minorCount,"minorExternal","minorInternal"); }
-
-// Skill Development = Theory + Practical
-function addSkill(){ 
-  skillCount++; 
-  addSubject("skillSubjects","Skill Development "+skillCount,"skillTheory","skillPractical","Theory","Practical"); 
-}
-
-// Project = Only Total
-function addProject(){ 
-  projectCount++; 
-  addSubject("projectSubjects","Project "+projectCount,"projectMarks",null,"Total",""); 
-}
+function addSkill(){ skillCount++; addSubject("skillSubjects","Skill Development "+skillCount,"skillTheory","skillPractical","TH","PR"); }
+function addProject(){ projectCount++; addSubject("projectSubjects","Project "+projectCount,"projectMarks",null,"Total",""); }
 
 function calculateResult(){
+  const majors=document.querySelectorAll(".majorTheoryExternal");
+  const majorInternals=document.querySelectorAll(".majorTheoryInternal");
+  const coExt=document.querySelector(".coExternal").value;
+  const coInt=document.querySelector(".coInternal").value;
+  let mandatoryOk=true;
+
+  if(majors.length<3){ mandatoryOk=false; }
+  else {
+    for(let i=0;i<3;i++){
+      if((majors[i].value==="" || majorInternals[i].value==="")) mandatoryOk=false;
+    }
+  }
+  if(coExt==="" || coInt==="") mandatoryOk=false;
+  if(!mandatoryOk){ alert("Plz Enter Marks of All Subjects"); return; }
+
   const tbody=document.querySelector("#resultTable tbody");
   tbody.innerHTML="";
   let graceLeft=maxGrace, remainingGraceSubjects=maxGraceSubjects;
@@ -181,9 +223,10 @@ function calculateResult(){
     });
   });
 
-  const coExt=Number(document.querySelector(".coExternal").value)||0;
-  const coInt=Number(document.querySelector(".coInternal").value)||0;
-  if(coExt || coInt) subjects.push({name:"Co-Curricular",ext:coExt,internal:coInt,type:"coCurricular",grace:0,initialPass:false});
+  // Co-curricular
+  const coE=Number(document.querySelector(".coExternal").value)||0;
+  const coI=Number(document.querySelector(".coInternal").value)||0;
+  if(coE || coI) subjects.push({name:"Co-Curricular",ext:coE,internal:coI,type:"coCurricular",grace:0,initialPass:false});
 
   function checkPass(subj,extTotal){
     const total=subj.internal+extTotal;
@@ -196,19 +239,18 @@ function calculateResult(){
 
   subjects.forEach(subj=>{
     if(graceLeft<=0 || remainingGraceSubjects<=0) return;
-    if(subj.type==="majorTheory"||subj.type==="minor"||subj.type==="coCurricular"){
-      let needGrace=0;
-      const total=subj.ext+subj.internal;
-      if(subj.type==="majorTheory"||subj.type==="minor"){
-        if(subj.ext<25 || total<33) needGrace=Math.min(maxGrace,25-subj.ext);
-      } else if(subj.type==="coCurricular"){
-        if(total<40) needGrace=Math.min(maxGrace,75-subj.ext);
-      }
-      if(needGrace>0){
-        const applied=Math.min(needGrace,graceLeft);
-        subj.ext+=applied; subj.grace+=applied;
-        graceLeft-=applied; remainingGraceSubjects--;
-      }
+    let total=subj.ext+subj.internal;
+    let needGrace=0;
+    if(subj.type==="majorTheory"||subj.type==="minor"||subj.type==="majorPractical"){
+      if(subj.ext<25){ needGrace=25-subj.ext; }
+      if(needGrace===0 && total<33 && subj.ext>=25){ needGrace=33-total; }
+    } else if(subj.type==="skill"||subj.type==="coCurricular"||subj.type==="project"){
+      if(total<40){ needGrace=40-total; }
+    }
+    if(needGrace>0){
+      const applied=Math.min(needGrace,graceLeft,maxGrace);
+      subj.ext+=applied; subj.grace+=applied;
+      graceLeft-=applied; remainingGraceSubjects--;
     }
   });
 
@@ -220,14 +262,12 @@ function calculateResult(){
     let status=checkPass(subj,subj.ext)?"Pass":"Fail";
     if(subj.initialPass && subj.grace===0) status="Pass";
     if(anyFailAfterGrace && !subj.initialPass && subj.grace>0) status="Fail";
-
     let short=0;
     if(status==="Fail"){
-      if(subj.type==="majorTheory"||subj.type==="minor"||subj.type==="majorPractical")
+      if(subj.type==="majorTheory"||subj.type==="minor"||subj.type==="majorPractical"){
         short=Math.max(0,33-total,25-(subj.ext-subj.grace));
-      else short=Math.max(0,40-total);
+      } else { short=Math.max(0,40-total); }
     }
-
     const tr=document.createElement("tr");
     tr.className=subj.grace>0?"graceApplied":"";
     tr.innerHTML=`<td>${subj.name}</td>
@@ -242,11 +282,24 @@ function calculateResult(){
   });
 
   const failMessage='Fail (ग्रेस मिलने के बाद भी यदि किसी भी विषय में बैक रहती है तो किसी भी विषय में ग्रेस नहीं मिलेगा)';
-  document.getElementById("overall").innerHTML=anyFailAfterGrace?`Overall Result: <span class="fail">${failMessage}</span>`:`Overall Result: <span class="pass">PASS</span>`;
+  document.getElementById("overall").innerHTML=anyFailAfterGrace
+    ? `Overall Result: <span class="fail">${failMessage}</span>`
+    : `Overall Result: <span class="pass">PASS</span>`;
 }
 
 function resetForm(){ location.reload(); }
-</script>
 
+function downloadPDF(){
+  const element=document.getElementById("gradeCard");
+  const opt={
+    margin:0.5,
+    filename:'GradeCard.pdf',
+    image:{type:'jpeg',quality:0.98},
+    html2canvas:{scale:2},
+    jsPDF:{unit:'in',format:'a4',orientation:'portrait'}
+  };
+  html2pdf().set(opt).from(element).save();
+}
+</script>
 </body>
 </html>
