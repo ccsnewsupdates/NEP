@@ -7,48 +7,53 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 <style>
 body { font-family: Arial, sans-serif; background:#f7f9fb; padding:10px; margin:0; }
-h1 { text-align:center; font-size:1.4em; margin-bottom:5px; }
-h2 { font-size:1em; margin-top:15px; margin-bottom:8px; cursor:pointer; }
-.description { text-align:center; margin-bottom:10px; font-size:0.9em; font-weight:bold; }
-.owner { text-align:center; font-size:0.85em; margin-bottom:15px; }
+h1 { text-align:center; font-size:1.3em; margin-bottom:5px; }
+h2 { font-size:1em; margin-top:10px; margin-bottom:8px; cursor:pointer; }
+.description { text-align:center; margin-bottom:10px; font-size:0.85em; font-weight:bold; }
+.owner { text-align:center; font-size:0.8em; margin-bottom:12px; }
 .owner b { color:red; font-size:1em; }
-.owner small { font-size:0.75em; display:block; }
-.rules { border:1px solid #ccc; background:#fff; padding:10px; margin-bottom:15px; border-radius:5px; }
-.rules ul { margin:0; padding-left:20px; font-size:0.85em; line-height:1.5; }
-.subject-section { margin-bottom:15px; border:1px solid #ccc; border-radius:5px; padding:10px; background:#fff; }
-.subject { margin-bottom:8px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-.subject label { min-width:120px; font-weight:bold; margin-bottom:0; }
-.subject input[type=number] { width:45px; text-align:center; }
-button { padding:6px 12px; margin:5px 5px 5px 0; cursor:pointer; background:#007BFF; color:#fff; border:none; border-radius:5px; font-size:0.85em; transition:0.3s; }
-button:hover { background:#0056b3; transform:scale(1.05); }
-table { width:100%; border-collapse: collapse; margin-top:15px; font-size:0.85em; }
+.owner small { font-size:0.7em; display:block; }
+.rules { border:1px solid #ccc; background:#fff; padding:8px; margin-bottom:12px; border-radius:8px; font-size:0.8em; box-shadow:0 3px 6px rgba(0,0,0,0.1); background:#fffde7; }
+.rules ul { margin:0; padding-left:18px; line-height:1.4; }
+
+/* ✅ 3D Card Style */
+.subject-section {
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  background: #fffde7;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.subject-section:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+}
+
+.subject { margin-bottom:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.subject label { min-width:110px; font-weight:bold; margin-bottom:0; font-size:0.85em; }
+.subject input[type=number] { width:40px; text-align:center; font-size:0.85em; }
+
+button { padding:6px 10px; margin:4px 4px 4px 0; cursor:pointer; background:#007BFF; color:#fff; border:none; border-radius:5px; font-size:0.8em; transition:0.3s; }
+button:hover { background:#0056b3; }
+
+table { width:100%; border-collapse: collapse; margin-top:12px; font-size:0.75em; }
 thead { background:#f0f0f0; }
-th, td { border:1px solid #ccc; padding:6px; text-align:center; }
+th, td { border:1px solid #ccc; padding:5px; text-align:center; }
 .pass { color:green; font-weight:bold; }
 .fail { color:red; font-weight:bold; }
 .grace { color:red; font-weight:bold; }
 .graceApplied { background:#fff0f0; } 
-#overall { font-size:1.1em; text-align:center; margin-top:10px; font-weight:bold; }
-#note { margin-top:20px; font-size:0.8em; text-align:center; color:#333; }
+#overall { font-size:1em; text-align:center; margin-top:8px; font-weight:bold; }
+#note { margin-top:12px; font-size:0.7em; text-align:center; color:#333; }
 
 /* ✅ Grade Card light yellow */
 #gradeCard {
   background: #fffde7;
-  padding: 10px;
+  padding: 8px;
   border-radius: 6px;
-}
-
-/* Tablet */
-@media(min-width:768px) and (max-width:1024px){
-  .subject label { min-width:150px; }
-  .subject input[type=number]{ width:55px; }
-  table { font-size:0.9em; }
-}
-/* Laptop/Desktop */
-@media(min-width:1025px){
-  .subject label { min-width:200px; }
-  .subject input[type=number]{ width:60px; }
-  table { font-size:1em; }
+  box-shadow:0 3px 6px rgba(0,0,0,0.15);
 }
 </style>
 </head>
@@ -103,38 +108,32 @@ Join Telegram Channel: <a href="https://t.me/CCSUniversityMRT" target="_blank">t
 <!-- Marks Section -->
 <div id="marksSection" style="display:none;">
 
-  <!-- Semester Title (for Grade Card) -->
-  <div id="semTitle" style="text-align:center; font-weight:bold; font-size:1.1em; margin-bottom:10px;"></div>
+  <div id="semTitle" style="text-align:center; font-weight:bold; font-size:1em; margin-bottom:8px;"></div>
 
-  <!-- Major Theory -->
   <div class="subject-section">
   <h2>Major Theory Subjects</h2>
   <div id="majorTheorySubjects"></div>
   <button onclick="addMajorTheory()">Add Major Theory</button>
   </div>
 
-  <!-- Major Practical -->
   <div class="subject-section">
   <h2>Major Practical Subjects</h2>
   <div id="majorPracticalSubjects"></div>
   <button onclick="addMajorPractical()">Add Major Practical</button>
   </div>
 
-  <!-- Minor -->
   <div class="subject-section" id="minorSection">
   <h2>Minor Subjects</h2>
   <div id="minorSubjects"></div>
   <button onclick="addMinor()">Add Minor Subject</button>
   </div>
 
-  <!-- Skill -->
   <div class="subject-section" id="skillSection">
   <h2>Skill Development</h2>
   <div id="skillSubjects"></div>
   <button onclick="addSkill()">Add Skill Development</button>
   </div>
 
-  <!-- Co-Curricular -->
   <div class="subject-section">
   <h2>Co-Curricular</h2>
   <div class="subject">
@@ -144,21 +143,18 @@ Join Telegram Channel: <a href="https://t.me/CCSUniversityMRT" target="_blank">t
   </div>
   </div>
 
-  <!-- Project -->
   <div class="subject-section" id="projectSection" style="display:none;">
   <h2>Project</h2>
   <div id="projectSubjects"></div>
   <button onclick="addProject()">Add Project</button>
   </div>
 
-  <!-- Action Buttons -->
-  <div style="text-align:center; margin-top:10px;">
+  <div style="text-align:center; margin-top:8px;">
   <button onclick="calculateResult()">Calculate Result</button>
   <button onclick="resetForm()">Reset</button>
   <button onclick="downloadPDF()">Download Grade Card (PDF)</button>
   </div>
 
-  <!-- Result Table -->
   <div id="gradeCard">
   <table id="resultTable">
   <thead>
