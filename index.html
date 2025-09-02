@@ -6,82 +6,380 @@
 <title>NEP Result Calculator (with Grace)</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 <style>
-body { font-family: Arial, sans-serif; background:#f7f9fb; padding:10px; margin:0; }
-h1 { text-align:center; font-size:1.3em; margin-bottom:5px; }
-h2 { font-size:1em; margin-top:10px; margin-bottom:8px; cursor:pointer; }
-.description { text-align:center; margin-bottom:10px; font-size:0.85em; font-weight:bold; }
-.owner { text-align:center; font-size:0.8em; margin-bottom:12px; }
-.owner b { color:red; font-size:1em; }
-.owner small { font-size:0.7em; display:block; }
-.rules { border:1px solid #ccc; background:#fff; padding:8px; margin-bottom:12px; border-radius:8px; font-size:0.8em; box-shadow:0 3px 6px rgba(0,0,0,0.1); background:#fffde7; }
-.rules ul { margin:0; padding-left:18px; line-height:1.4; }
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
-/* ✅ 3D Card Style */
-.subject-section {
+:root {
+  --primary-color: #4a90e2;
+  --secondary-color: #50e3c2;
+  --header-color: #ffc107;
+  --bg-color: #f0f4f8;
+  --card-bg: rgba(255, 255, 255, 0.85); /* Frosted glass effect */
+  --shadow-color: rgba(0, 0, 0, 0.15);
+  --pass-color: #28a745;
+  --fail-color: #dc3545;
+  --grace-color: #fd7e14;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 15px;
+  margin: 0;
+  color: #333;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.main-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.main-header h1 {
+    font-size: 3em;
+    font-weight: 700;
+    background: -webkit-linear-gradient(45deg, #fdfbfb, #ffc107);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0px 4px 8px rgba(0,0,0,0.4);
+    margin: 0;
+}
+.main-header h2 {
+    font-size: 1.5em;
+    font-weight: 600;
+    color: #f0f4f8;
+    margin-top: 0px;
+    text-shadow: 0px 2px 4px rgba(0,0,0,0.4);
+}
+
+h2.section-title {
+  font-size: 1.2em;
+  margin-top: 10px;
   margin-bottom: 12px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 10px;
-  background: #fffde7;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--secondary-color);
+  padding-bottom: 5px;
+  font-weight: 700;
+}
+
+.description {
+  text-align: center;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+
+/* Tab Styles */
+.tab-container {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 5px 15px var(--shadow-color);
+    margin-bottom: 20px;
+    overflow: hidden;
+    backdrop-filter: blur(5px);
+   -webkit-backdrop-filter: blur(5px);
+}
+.tab-buttons {
+    overflow: hidden;
+    background-color: rgba(241, 241, 241, 0.5);
+    display: flex;
+}
+.tab-buttons button {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: all 0.3s ease;
+    font-size: 1em;
+    font-weight: 600;
+    color: var(--primary-color);
+    flex: 1;
+    border-radius: 0;
+    box-shadow: none;
+}
+.tab-buttons button:hover {
+    background-color: rgba(221, 221, 221, 0.7);
+    transform: none;
+    box-shadow: none;
+}
+.tab-buttons button.active {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+.tab-content {
+    display: none;
+    padding: 15px;
+    text-align: center;
+    font-size: 0.9em;
+    border-top: none;
+}
+.tab-content b { color: var(--primary-color); }
+.tab-content small { font-size: 0.8em; display: block; }
+
+
+.rules {
+  background: var(--card-bg);
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-left: 5px solid var(--primary-color);
+}
+.rules ul { margin: 0; padding-left: 20px; line-height: 1.6; }
+
+/* 3D Card Style */
+.subject-section {
+  margin-bottom: 20px;
+  border-radius: 15px;
+  padding: 20px;
+  background: var(--card-bg);
+  box-shadow: 0 8px 24px var(--shadow-color);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 .subject-section:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
 }
 
-.subject { margin-bottom:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-.subject label { min-width:110px; font-weight:bold; margin-bottom:0; font-size:0.85em; }
-.subject input[type=number] { width:40px; text-align:center; font-size:0.85em; }
+.subject {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.subject label {
+  min-width: 120px;
+  font-weight: 600;
+  font-size: 0.9em;
+  color: #333;
+}
+.subject input[type=text],
+.subject input[type=number],
+select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.subject input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 8px rgba(74, 144, 226, 0.6);
+}
+.subject input[type=text] { width: 90px; }
+.subject input[type=number] { width: 60px; text-align: center; }
 
-button { padding:6px 10px; margin:4px 4px 4px 0; cursor:pointer; background:#007BFF; color:#fff; border:none; border-radius:5px; font-size:0.8em; transition:0.3s; }
-button:hover { background:#0056b3; }
+button, .social-button {
+  padding: 12px 25px;
+  margin: 5px;
+  cursor: pointer;
+  background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 1em;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  text-decoration: none;
+  display: inline-block;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+button:hover, .social-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+button:active, .social-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
 
-table { width:100%; border-collapse: collapse; margin-top:12px; font-size:0.75em; }
-thead { background:#f0f0f0; }
-th, td { border:1px solid #ccc; padding:5px; text-align:center; }
-.pass { color:green; font-weight:bold; }
-.fail { color:red; font-weight:bold; }
-.grace { color:red; font-weight:bold; }
-.graceApplied { background:#fff0f0; } 
-#overall { font-size:1em; text-align:center; margin-top:8px; font-weight:bold; }
-#note { margin-top:12px; font-size:0.7em; text-align:center; color:#333; }
-
-/* ✅ Grade Card light yellow */
+/* Modal Popup Styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.6);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  margin: 20px;
+  border-radius: 15px;
+  width: 95%;
+  max-width: 750px;
+  animation: zoomIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
 #gradeCard {
-  background: #fffde7;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+.close-btn {
+  color: #aaa;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 32px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+.close-btn:hover, .close-btn:focus {
+  color: #333;
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.4); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Grade Card Content */
+#congratsMsg { text-align: center; color: var(--primary-color); margin-bottom: 15px;}
+@keyframes flash {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+.flash-animation {
+  animation: flash 1.5s infinite;
+}
+
+#studentDetails {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+}
+#studentDetails div { flex: 1 1 200px; margin: 5px 0; }
+#studentDetails b { color: #333; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  font-size: 0.8em;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+thead {
+  background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+th, td {
+  border: 1px solid #ddd;
   padding: 8px;
-  border-radius: 6px;
-  box-shadow:0 3px 6px rgba(0,0,0,0.15);
+  text-align: center;
+}
+tbody tr:nth-child(even) { background-color: #f9f9f9; }
+.pass { color: var(--pass-color); font-weight: bold; }
+.fail { color: var(--fail-color); font-weight: bold; }
+.grace { color: var(--grace-color); font-weight: bold; }
+.graceApplied { background: #fff3e0; }
+
+#overall {
+  font-size: 1.2em;
+  text-align: center;
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+.overall-pass { background-color: #e8f5e9; color: var(--pass-color); }
+.overall-fail { background-color: #ffebee; color: var(--fail-color); }
+
+#note {
+  margin-top: 20px;
+  font-size: 0.8em;
+  text-align: justify;
+  color: #555;
+  background-color: #f1f1f1;
+  padding: 10px;
+  border-radius: 5px;
+  border-left: 4px solid var(--fail-color);
+}
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding: 10px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
 </style>
 </head>
 <body>
 
-<h1>NEP Result Calculator (with Grace)</h1>
+<div class="container">
+<div class="main-header">
+    <h1>CCS UNIVERSITY MEERUT NEWS & UPDATES</h1>
+    <h2>UG NEP Grace Calculator</h2>
+</div>
+
 <div class="description">
-Only for NEP BA, B.Sc, B.Com Students <br><br>
-यह CCS University Meerut की कोई अधिकारिक साईट/ऐप नहीं है। केवल एनईपी 
-रिजल्ट में Grace Marks की गणना करने के लिये व्यक्तिगत रूप से बनाया गया है। 
-यह केवल सूचना मात्र के लिये है। रिजल्ट गणना में त्रुटि सम्भव है।
+    <p style="font-size: 1.2em; font-weight: 700; color: #d9534f;">Only for NEP BA, B.Sc, B.Com Students</p>
+    <p style="font-weight: 600; margin-top: 15px; color: #333;">अस्वीकरण (Disclaimer):</p>
+    <p style="font-size: 0.9em; text-align: left; margin-top: 5px; color: #333;">
+        यह पोर्टल CCS University, Meerut की आधिकारिक साइट/ऐप नहीं है। इसे केवल UGNEP परिणाम में Grace Marks की गणना हेतु व्यक्तिगत स्तर पर बनाया गया है।
+        यह CCS University Meerut के पत्रांक संख्या गोप/1976 दिनांक 28-08-2025 के अनुपालन में मात्र सूचनात्मक उपयोग के लिए है। परिणामों में त्रुटि सम्भव है, अतः किसी भी आधिकारिक प्रयोजन हेतु इसका उपयोग न करें।
+    </p>
 </div>
 
-<div class="owner">
-CCS University Meerut & SSV College Hapur Updates <br>
-Join Telegram Channel: <a href="https://t.me/ccsnewsupdates" target="_blank">t.me/ccsnewsupdates</a><br>
-<b>Sanjeev Chauhan</b> <small>Owner</small>
+<div class="tab-container">
+    <div class="tab-buttons">
+        <button class="tab-link" onclick="openTab(event, 'Channel1')" id="defaultOpen">Telegram Channel 1</button>
+        <button class="tab-link" onclick="openTab(event, 'Channel2')">Telegram Channel 2</button>
+    </div>
+    <div id="Channel1" class="tab-content">
+        CCS University Meerut & SSV College Hapur Updates <br>
+        Join Telegram Channel: <a href="https://t.me/ccsnewsupdates" target="_blank">t.me/ccsnewsupdates</a><br>
+        <b>Sanjeev Chauhan</b> <small>Owner</small>
+    </div>
+    <div id="Channel2" class="tab-content">
+        CCS University Meerut & Other Colleges Updates <br>
+        Join Telegram Channel: <a href="https://t.me/CCSUniversityMRT" target="_blank">t.me/CCSUniversityMRT</a><br>
+        <b>Aaditya Chaudhary</b> <small>Owner</small>
+    </div>
 </div>
 
-<div class="owner">
-CCS University Meerut & Other Colleges Updates <br>
-Join Telegram Channel: <a href="https://t.me/CCSUniversityMRT" target="_blank">t.me/CCSUniversityMRT</a><br>
-<b>Aaditya Chaudhary</b> <small>Owner</small>
+<div style="text-align: center; margin-bottom: 20px;">
+    <a href="https://linkbio.co/ccsupdates" target="_blank" class="social-button">Join Us on All Social Media</a>
 </div>
 
-<!-- Grace Rules -->
 <div class="rules">
-<h2>Grace Rules</h2>
+<h2 class="section-title">Grace Rules</h2>
 <ul>
 <li>किसी भी student को maximum 5 marks तक Grace मिल सकता है।</li>
 <li>Grace ज़्यादा से ज़्यादा 3 subjects में दिया जाएगा।</li>
@@ -91,107 +389,155 @@ Join Telegram Channel: <a href="https://t.me/CCSUniversityMRT" target="_blank">t
 </ul>
 </div>
 
-<!-- Semester Selection -->
 <div class="subject-section">
-<h2>Select Semester</h2>
-<select id="semester" onchange="semesterChange()">
-  <option value="">--Select Semester--</option>
-  <option value="1">1st Semester</option>
-  <option value="2">2nd Semester</option>
-  <option value="3">3rd Semester</option>
-  <option value="4">4th Semester</option>
-  <option value="5">5th Semester</option>
-  <option value="6">6th Semester</option>
-</select>
+    <h2 class="section-title">Student Information</h2>
+    <div class="subject">
+        <label for="studentName">Student Name:</label>
+        <input type="text" id="studentName" placeholder="Enter Full Name">
+    </div>
+    <div class="subject">
+        <label for="rollNumber">Roll Number:</label>
+        <input type="text" id="rollNumber" placeholder="Enter Roll Number">
+    </div>
 </div>
 
-<!-- Marks Section -->
+<div class="subject-section">
+    <h2 class="section-title">Select Class & Semester</h2>
+    <div class="subject">
+        <label for="className">Class:</label>
+        <select id="className">
+          <option value="">--Select Class--</option>
+          <option value="B.A.">B.A.</option>
+          <option value="B.Sc.">B.Sc.</option>
+          <option value="B.Com.">B.Com.</option>
+        </select>
+    </div>
+    <div class="subject">
+        <label for="semester">Semester:</label>
+        <select id="semester" onchange="semesterChange()">
+          <option value="">--Select Semester--</option>
+          <option value="1">1st Semester</option>
+          <option value="2">2nd Semester</option>
+          <option value="3">3rd Semester</option>
+          <option value="4">4th Semester</option>
+          <option value="5">5th Semester</option>
+          <option value="6">6th Semester</option>
+        </select>
+    </div>
+</div>
+
 <div id="marksSection" style="display:none;">
-
-  <div id="semTitle" style="text-align:center; font-weight:bold; font-size:1em; margin-bottom:8px;"></div>
-
+  <div id="semTitle" style="text-align:center; font-weight:bold; font-size:1.2em; margin-bottom:10px; color: #fff; text-shadow: 1px 1px 2px #333;"></div>
   <div class="subject-section">
-  <h2>Major Theory Subjects</h2>
+  <h2 class="section-title">Major Theory Subjects</h2>
   <div id="majorTheorySubjects"></div>
   <button onclick="addMajorTheory()">Add Major Theory</button>
   </div>
-
   <div class="subject-section">
-  <h2>Major Practical Subjects</h2>
+  <h2 class="section-title">Major Practical Subjects</h2>
   <div id="majorPracticalSubjects"></div>
   <button onclick="addMajorPractical()">Add Major Practical</button>
   </div>
-
   <div class="subject-section" id="minorSection">
-  <h2>Minor Subjects</h2>
+  <h2 class="section-title">Minor Subjects</h2>
   <div id="minorSubjects"></div>
   <button onclick="addMinor()">Add Minor Subject</button>
   </div>
-
   <div class="subject-section" id="skillSection">
-  <h2>Skill Development</h2>
+  <h2 class="section-title">Skill Development</h2>
   <div id="skillSubjects"></div>
   <button onclick="addSkill()">Add Skill Development</button>
   </div>
-
   <div class="subject-section">
-  <h2>Co-Curricular</h2>
+  <h2 class="section-title">Co-Curricular</h2>
   <div class="subject">
-  <label>Co-Curricular:</label>
-  EXT <input type="number" min="0" max="99" class="coExternal">
-  INT <input type="number" min="0" max="99" class="coInternal">
+    <label>Co-Curricular:</label>
+    <input type="text" class="subjectCode" placeholder="Sub Code">
+    EXT <input type="number" min="0" max="99" class="coExternal">
+    INT <input type="number" min="0" max="99" class="coInternal">
   </div>
   </div>
-
   <div class="subject-section" id="projectSection" style="display:none;">
-  <h2>Project</h2>
+  <h2 class="section-title">Project</h2>
   <div id="projectSubjects"></div>
   <button onclick="addProject()">Add Project</button>
   </div>
-
-  <div style="text-align:center; margin-top:8px;">
+  <div style="text-align:center; margin-top:20px;">
   <button onclick="calculateResult()">Calculate Result</button>
   <button onclick="resetForm()">Reset</button>
-  <button onclick="downloadPDF()">Download Grade Card (PDF)</button>
   </div>
-
-  <div id="gradeCard">
-  <table id="resultTable">
-  <thead>
-  <tr>
-  <th>Subject</th>
-  <th>External</th>
-  <th>Grace</th>
-  <th>External after Grace</th>
-  <th>Internal</th>
-  <th>Total</th>
-  <th>Status</th>
-  <th>Remarks</th>
-  </tr>
-  </thead>
-  <tbody></tbody>
-  </table>
-  <div id="overall"></div>
-  <div id="note">This result is only for information purpose. Not valid to use for Admission or other activities</div>
-  </div>
-
 </div>
+<footer>
+    © 2025 | Designed by Sanjeev 💞
+</footer>
+</div><div id="resultModal" class="modal">
+  <div class="modal-content">
+    <div id="gradeCard">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+      <h3 style="text-align:center; margin: 0; color: var(--primary-color);">Chaudhary Charan Singh University, Meerut</h3>
+      <h4 style="text-align:center; margin-top: 5px; font-weight: normal; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Unofficial Grade Card</h4>
+      <div id="congratsMsg"></div>
+      <div id="studentDetails"></div>
+      <table id="resultTable">
+        <thead>
+          <tr>
+            <th>Sub Code</th>
+            <th>Subject</th>
+            <th>External</th>
+            <th>Grace</th>
+            <th>Ext + Grace</th>
+            <th>Internal</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Remarks</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div id="overall"></div>
+      <div style="text-align:center; margin-top:15px;">
+        <button onclick="downloadPDF()">Download Grade Card (PDF)</button>
+      </div>
+      <div id="note">
+          <strong>अस्वीकरण:</strong> यह एक अनौपचारिक ग्रेड कार्ड है और केवल सूचना के उद्देश्यों के लिए है। यह चौधरी चरण सिंह विश्वविद्यालय, मेरठ द्वारा जारी आधिकारिक दस्तावेज़ नहीं है। किसी भी विसंगति के लिए, कृपया विश्वविद्यालय के आधिकारिक रिकॉर्ड को देखें।
+          <hr style="margin: 5px 0; border-color: #ddd;">
+          <strong>Disclaimer:</strong> This is an unofficial grade card generated for informational purposes only. It is not an official document issued by Chaudhary Charan Singh University, Meerut. For any discrepancy, please refer to the official records of the university.
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <script>
 let majorTheoryCount=0, majorPracticalCount=0, minorCount=0, skillCount=0, projectCount=0;
 const maxGrace=5, maxGraceSubjects=3;
 for(let i=0;i<3;i++) addMajorTheory();
 
+// Tab script
+function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tab-link");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+document.getElementById("defaultOpen").click();
+
 function semesterChange(){
   let sem=document.getElementById("semester").value;
   let semTitle=document.getElementById("semTitle");
   if(sem===""){ document.getElementById("marksSection").style.display="none"; return; }
   document.getElementById("marksSection").style.display="block";
-  semTitle.innerHTML="Semester: "+sem;
-  if(sem==="5" || sem==="6"){ document.getElementById("minorSection").style.display="none"; document.getElementById("skillSection").style.display="none"; }
-  else { document.getElementById("minorSection").style.display="block"; document.getElementById("skillSection").style.display="block"; }
-  if(sem==="6"){ document.getElementById("projectSection").style.display="block"; }
-  else { document.getElementById("projectSection").style.display="none"; }
+  semTitle.innerHTML="Enter Marks for Semester: "+sem;
+  document.getElementById("minorSection").style.display = (sem==="5" || sem==="6") ? "none" : "block";
+  document.getElementById("skillSection").style.display = (sem==="5" || sem==="6") ? "none" : "block";
+  document.getElementById("projectSection").style.display = (sem==="6") ? "block" : "none";
 }
 
 function addSubject(containerId,name,extClass,intClass,label1="EXT",label2="INT"){
@@ -200,17 +546,53 @@ function addSubject(containerId,name,extClass,intClass,label1="EXT",label2="INT"
   const div=document.createElement("div");
   div.className="subject";
   div.innerHTML=`<label>${name}:</label>
+  <input type="text" class="subjectCode" placeholder="Sub Code">
   ${label1} <input type="number" class="${extClass}" min="0" max="99">`+
   (intClass?` ${label2} <input type="number" class="${intClass}" min="0" max="99">`:"");
   container.appendChild(div);
 }
+
 function addMajorTheory(){ majorTheoryCount++; addSubject("majorTheorySubjects","Major Theory "+majorTheoryCount,"majorTheoryExternal","majorTheoryInternal"); }
-function addMajorPractical(){ majorPracticalCount++; addSubject("majorPracticalSubjects","Major Practical "+majorPracticalCount,"majorPracticalExternal","majorPracticalInternal"); }
+function addMajorPractical(){ majorPracticalCount++; addSubject("majorPracticalSubjects","Major Practical "+majorTheoryCount,"majorPracticalExternal","majorPracticalInternal"); }
 function addMinor(){ minorCount++; addSubject("minorSubjects","Minor "+minorCount,"minorExternal","minorInternal"); }
-function addSkill(){ skillCount++; addSubject("skillSubjects","Skill Development "+skillCount,"skillTheory","skillPractical","TH","PR"); }
+function addSkill(){ skillCount++; addSubject("skillSubjects","Skill Dev. "+skillCount,"skillTheory","skillPractical","TH","PR"); }
 function addProject(){ projectCount++; addSubject("projectSubjects","Project "+projectCount,"projectMarks",null,"Total",""); }
 
 function calculateResult(){
+  const studentName = document.getElementById('studentName').value;
+  const rollNumber = document.getElementById('rollNumber').value;
+  const className = document.getElementById('className').value;
+  const semester = document.getElementById('semester').value;
+
+  if (!studentName || !rollNumber || !className || !semester) {
+    alert("Please fill in all Student Information, Class, and Semester.");
+    return;
+  }
+ 
+  // Paper code validation
+  let allSubjectsWithMarks = document.querySelectorAll('.subject');
+  let paperCodeMissing = false;
+  allSubjectsWithMarks.forEach(subjectDiv => {
+      let hasMarks = false;
+      let inputs = subjectDiv.querySelectorAll('input[type=number]');
+      inputs.forEach(input => {
+          if (input.value !== '' && Number(input.value) > 0) {
+              hasMarks = true;
+          }
+      });
+      if (hasMarks) {
+          let codeInput = subjectDiv.querySelector('.subjectCode');
+          if (!codeInput || codeInput.value.trim() === '') {
+              paperCodeMissing = true;
+          }
+      }
+  });
+
+  if (paperCodeMissing) {
+      alert("Error: Please enter the Paper Code for all subjects that have marks entered.");
+      return;
+  }
+ 
   const majors=document.querySelectorAll(".majorTheoryExternal");
   const majorInternals=document.querySelectorAll(".majorTheoryInternal");
   const coExt=document.querySelector(".coExternal").value;
@@ -219,29 +601,39 @@ function calculateResult(){
   if(majors.length<3){ mandatoryOk=false; }
   else { for(let i=0;i<3;i++){ if((majors[i].value==="" || majorInternals[i].value==="")) mandatoryOk=false; } }
   if(coExt==="" || coInt==="") mandatoryOk=false;
-  if(!mandatoryOk){ alert("Plz Enter Marks of All Subjects"); return; }
+  if(!mandatoryOk){ alert("Please enter marks for all mandatory subjects (3 Major Theories and Co-Curricular)."); return; }
 
   const tbody=document.querySelector("#resultTable tbody"); tbody.innerHTML="";
   let graceLeft=maxGrace, remainingGraceSubjects=maxGraceSubjects;
   let subjects=[];
-  [
-    ["majorTheoryExternal","majorTheoryInternal","majorTheory","Major Theory"],
-    ["majorPracticalExternal","majorPracticalInternal","majorPractical","Major Practical"],
-    ["minorExternal","minorInternal","minor","Minor"],
-    ["skillTheory","skillPractical","skill","Skill Development"],
-    ["projectMarks",null,"project","Project"]
-  ].forEach(([extClass,intClass,type,displayName])=>{
-    const extInputs=document.querySelectorAll("."+extClass);
-    const intInputs=intClass?document.querySelectorAll("."+intClass):[];
-    extInputs.forEach((el,i)=>{
-      const ext=Number(el.value)||0;
-      const intr=intClass?Number(intInputs[i].value)||0:0;
-      if(ext!==0 || intr!==0){ subjects.push({name:`${displayName} ${i+1}`,ext,internal:intr,type,grace:0, initialPass:false}); }
+
+  const processSubjects = (extClass, intClass, type, displayName) => {
+    const containers = document.querySelectorAll(`.${extClass}`);
+    containers.forEach(el => {
+      const parent = el.closest('.subject');
+      const ext = Number(el.value) || 0;
+      const intr = intClass ? Number(parent.querySelector(`.${intClass}`).value) || 0 : 0;
+      const code = parent.querySelector('.subjectCode').value || 'N/A';
+      if(ext !== 0 || intr !== 0) {
+        subjects.push({
+          name: `${displayName} ${subjects.filter(s=>s.type===type).length+1}`,
+          code, ext, internal: intr, type, grace: 0, initialPass: false
+        });
+      }
     });
-  });
-  const coE=Number(document.querySelector(".coExternal").value)||0;
-  const coI=Number(document.querySelector(".coInternal").value)||0;
-  if(coE || coI) subjects.push({name:"Co-Curricular",ext:coE,internal:coI,type:"coCurricular",grace:0,initialPass:false});
+  };
+
+  processSubjects("majorTheoryExternal","majorTheoryInternal","majorTheory","Major Theory");
+  processSubjects("majorPracticalExternal","majorPracticalInternal","majorPractical","Major Practical");
+  processSubjects("minorExternal","minorInternal","minor","Minor");
+  processSubjects("skillTheory","skillPractical","skill","Skill Development");
+  processSubjects("projectMarks",null,"project","Project");
+
+  const coParent = document.querySelector(".coExternal").closest('.subject');
+  const coE=Number(coParent.querySelector(".coExternal").value)||0;
+  const coI=Number(coParent.querySelector(".coInternal").value)||0;
+  const coCode = coParent.querySelector(".subjectCode").value || 'N/A';
+  if(coE || coI) subjects.push({name:"Co-Curricular", code: coCode, ext:coE,internal:coI,type:"coCurricular",grace:0,initialPass:false});
 
   function checkPass(subj,extTotal){
     const total=subj.internal+extTotal;
@@ -249,58 +641,94 @@ function calculateResult(){
     if(subj.type==="skill"||subj.type==="coCurricular"||subj.type==="project") return total>=40;
     return false;
   }
+
   subjects.forEach(subj=>{ subj.initialPass = checkPass(subj,subj.ext); });
+
   subjects.forEach(subj=>{
-    if(graceLeft<=0 || remainingGraceSubjects<=0) return;
-    let total=subj.ext+subj.internal; let needGrace=0;
+    if(graceLeft<=0 || remainingGraceSubjects<=0 || subj.initialPass) return;
+    let total=subj.ext+subj.internal;
+    let needGrace=0;
     if(subj.type==="majorTheory"||subj.type==="minor"||subj.type==="majorPractical"){
-      if(subj.ext<25){ needGrace=25-subj.ext; }
-      if(needGrace===0 && total<33 && subj.ext>=25){ needGrace=33-total; }
-    } else if(subj.type==="skill"||subj.type==="coCurricular"||subj.type==="project"){ if(total<40){ needGrace=40-total; } }
+      if(subj.ext<25) needGrace=25-subj.ext;
+      if(needGrace===0 && total<33 && subj.ext>=25) needGrace=33-total;
+    } else if(subj.type==="skill"||subj.type==="coCurricular"||subj.type==="project"){ if(total<40) needGrace=40-total; }
     if(needGrace>0){ const applied=Math.min(needGrace,graceLeft,maxGrace); subj.ext+=applied; subj.grace+=applied; graceLeft-=applied; remainingGraceSubjects--; }
   });
 
-  let anyFailAfterGrace=false; subjects.forEach(subj=>{ if(!checkPass(subj,subj.ext)) anyFailAfterGrace=true; });
+  let anyFailAfterGrace=false;
+  subjects.forEach(subj=>{ if(!checkPass(subj,subj.ext)) anyFailAfterGrace=true; });
+
   subjects.forEach(subj=>{
-    const total=subj.ext+subj.internal;
+    let total=subj.ext+subj.internal;
     let status=checkPass(subj,subj.ext)?"Pass":"Fail";
-    if(subj.initialPass && subj.grace===0) status="Pass";
-    if(anyFailAfterGrace && !subj.initialPass && subj.grace>0) status="Fail";
+    if(anyFailAfterGrace && subj.grace>0) total = (subj.ext - subj.grace) + subj.internal; // Revert total if grace is cancelled
+   
     let remark="";
     if(status==="Fail"){
+      if(anyFailAfterGrace && subj.grace>0) {
+        subj.ext -= subj.grace; // Revert external marks
+      }
       if(subj.type==="majorTheory"||subj.type==="minor"||subj.type==="majorPractical"){
-        if(subj.ext<25) remark=`Need ${25-(subj.ext)} more marks in External`;
-        else if(total<33) remark=`Need ${33-total} more marks in Total`;
-      } else { remark=`Need ${40-total} more marks in Total`; }
-    } else { remark="OK"; }
-
-    if(anyFailAfterGrace && subj.grace>0){
-      remark = `Grace Mark(s) Cancelled - ${remark}`;
-    }
+        if(subj.ext<25) remark=`Need ${25-subj.ext} in External`;
+        else if(total<33) remark=`Need ${33-total} in Total`;
+      } else { remark=`Need ${40-total} in Total`; }
+    } else { remark="-"; }
+    if(anyFailAfterGrace && subj.grace>0) remark = `Grace Cancelled - ${remark}`;
 
     const tr=document.createElement("tr");
     tr.className=subj.grace>0?"graceApplied":"";
-    tr.innerHTML=`<td>${subj.name}</td><td>${subj.ext-subj.grace}</td><td class="grace">${subj.grace}</td><td>${subj.ext}</td><td>${subj.internal}</td><td>${total}</td><td class="${status==='Pass'?'pass':'fail'}">${status}</td><td>${remark}</td>`;
+    tr.innerHTML=`<td>${subj.code}</td><td>${subj.name}</td><td>${subj.ext-subj.grace}</td><td class="grace">${anyFailAfterGrace ? 0 : subj.grace}</td><td>${subj.ext}</td><td>${subj.internal}</td><td>${total}</td><td class="${status==='Pass'?'pass':'fail'}">${status}</td><td>${remark}</td>`;
     tbody.appendChild(tr);
   });
 
-  let totalGraceApplied = subjects.reduce((sum,subj)=>sum+subj.grace,0);
+  // Populate Student Details on Grade Card
+  const selectedSemester = document.getElementById('semester').options[document.getElementById('semester').selectedIndex].text;
+  document.getElementById('studentDetails').innerHTML = `
+    <div><b>Name:</b> ${studentName}</div>
+    <div><b>Roll No:</b> ${rollNumber}</div>
+    <div><b>Program:</b> ${className} (NEP)</div>
+    <div><b>Semester:</b> ${selectedSemester}</div>
+  `;
+ 
+  const overallDiv = document.getElementById("overall");
+  const congratsDiv = document.getElementById("congratsMsg");
+
   if(anyFailAfterGrace){
-    const failMessage='Fail (ग्रेस मिलने के बाद भी यदि किसी भी विषय में बैक रहती है तो किसी भी विषय में ग्रेस नहीं मिलेगा)';
-    document.getElementById("overall").innerHTML=`Overall Result: <span class="fail">${failMessage}</span>`;
+    const failMessage='FAIL (ग्रेस मिलने के बाद भी यदि किसी भी विषय में बैक रहती है तो किसी भी विषय में ग्रेस नहीं मिलेगा)';
+    overallDiv.innerHTML=`Overall Result: <span class="fail">${failMessage}</span>`;
+    overallDiv.className = 'overall-fail';
+    congratsDiv.innerHTML = `<h2>Result</h2>`;
+    congratsDiv.classList.remove('flash-animation');
   } else {
+    let totalGraceApplied = subjects.reduce((sum,subj)=>sum+(anyFailAfterGrace ? 0 : subj.grace),0);
     if(totalGraceApplied>0){
-      document.getElementById("overall").innerHTML=`Overall Result: <span class="pass">PASS with Grace - ${totalGraceApplied}</span>`;
+      overallDiv.innerHTML=`Overall Result: <span class="pass">PASS with Grace (${totalGraceApplied} Marks)</span>`;
     } else {
-      document.getElementById("overall").innerHTML=`Overall Result: <span class="pass">PASS</span>`;
+      overallDiv.innerHTML=`Overall Result: <span class="pass">PASS</span>`;
     }
+    overallDiv.className = 'overall-pass';
+    congratsDiv.innerHTML = `<h2>🎉 Congratulations! 🎉</h2>`;
+    congratsDiv.classList.add('flash-animation');
+  }
+ 
+  openModal();
+}
+
+function openModal() { document.getElementById('resultModal').style.display = 'flex'; }
+function closeModal() { document.getElementById('resultModal').style.display = 'none'; }
+window.onclick = function(event) {
+  const modal = document.getElementById('resultModal');
+  if (event.target == modal) {
+    closeModal();
   }
 }
 
 function resetForm(){ location.reload(); }
 function downloadPDF(){
   const element=document.getElementById("gradeCard");
-  const opt={ margin:0.5, filename:'GradeCard.pdf', image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2}, jsPDF:{unit:'in',format:'a4',orientation:'portrait'} };
+  const studentName = document.getElementById('studentName').value || 'student';
+  const rollNumber = document.getElementById('rollNumber').value || '0000';
+  const opt={ margin:0.5, filename:`GradeCard_${studentName.replace(/\s/g, '_')}_${rollNumber}.pdf`, image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2}, jsPDF:{unit:'in',format:'a4',orientation:'portrait'} };
   html2pdf().set(opt).from(element).save();
 }
 </script>
