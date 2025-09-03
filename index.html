@@ -22,7 +22,7 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: var(--bg-color); /* MODIFIED: Light background color */
   padding: 15px;
   margin: 0;
   color: #333;
@@ -38,21 +38,18 @@ body {
     margin-bottom: 20px;
 }
 .main-header h1 {
-    font-size: 3em;
+    font-size: 2.5em; /* MODIFIED: Size reduced */
     font-weight: 700;
-    /* New Gradient Color for the Heading */
-    background: -webkit-linear-gradient(45deg, #ff8008 0%, #ffc837 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0px 4px 8px rgba(0,0,0,0.4);
+    color: #34495e; /* MODIFIED: Color changed for contrast */
+    text-shadow: none; /* MODIFIED: Shadow removed for light bg */
     margin: 0;
 }
 .main-header h2 {
     font-size: 1.5em;
     font-weight: 600;
-    color: #f0f4f8;
+    color: #555; /* MODIFIED: Color changed for contrast */
     margin-top: 0px;
-    text-shadow: 0px 2px 4px rgba(0,0,0,0.4);
+    text-shadow: none; /* MODIFIED: Shadow removed for light bg */
 }
 
 h2.section-title {
@@ -343,8 +340,8 @@ footer {
     margin-top: 30px;
     padding: 10px;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    color: #333; /* MODIFIED: Color changed for contrast */
+    text-shadow: none; /* MODIFIED: Shadow removed for light bg */
 }
 
 /* Error message blink */
@@ -355,6 +352,11 @@ footer {
 <body>
 
 <div class="container">
+
+<div style="text-align: center; margin-bottom: 15px;">
+    <img src="logo-modified.jpg" alt="CCSU News & Updates Logo" style="max-width: 150px; border-radius: 50%;">
+</div>
+
 <div class="main-header">
     <h1>CCSU NEWS & UPDATES</h1>
     <h2>UG NEP Grace Calculator</h2>
@@ -387,7 +389,7 @@ footer {
 </div>
 
 <div style="text-align: center; margin-bottom: 20px;">
-    <a href="https://linkbio.co/ccsupdates" target="_blank" class="social-button">Join Us on All Social Media</a>
+    <a href="https://linkbio.co/ccsupdates" target="_blank" class="social-button">Other Social Media Links</a>
     <a href="https://youtu.be/YxxzgcotoU0" target="_blank" class="social-button tutorial-button">Tutorial Video Watch Here</a>
 </div>
 
@@ -440,7 +442,7 @@ footer {
 </div>
 
 <div id="marksSection" style="display:none;">
-  <div id="semTitle" style="text-align:center; font-weight:bold; font-size:1.2em; margin-bottom:10px; color: #fff; text-shadow: 1px 1px 2px #333;"></div>
+  <div id="semTitle" style="text-align:center; font-weight:bold; font-size:1.2em; margin-bottom:10px; color: #34495e; text-shadow: none;"></div>
   
   <div class="subject-section">
       <h2 class="section-title">Major Theory Subjects</h2>
@@ -459,8 +461,8 @@ footer {
       <div class="subject">
           <label>Minor Subject:</label>
           <select class="subjectCode minorCode" style="flex-grow:1;"><option value="">-- Select Subject --</option></select>
-          EXT <input type="number" min="0" max="99" class="minorExternal">
-          INT <input type="number" min="0" max="99" class="minorInternal">
+          EXT <input type="number" min="0" max="75" class="minorExternal">
+          INT <input type="number" min="0" max="25" class="minorInternal">
       </div>
   </div>
   
@@ -495,11 +497,11 @@ footer {
       <button onclick="resetForm()">Reset</button>
   </div>
 
-<div id="errorMsg" class="error-blink" style="display:none; text-align:center; margin:12px 0; font-weight:1000; color:#FFFFFF;">Enter Name/Roll Number/Marks of All Subjects</div>
+<div id="errorMsg" class="error-blink" style="display:none; text-align:center; margin:12px 0; font-weight:1000; color:#dc3545;">Enter Name/Roll Number/Marks of All Subjects</div>
 </div>
 
 <footer>
-    © 2025 | Designed by Sanjeev 💞
+    © 2025 | Designed by Sanjeev Chauhan 💞
 </footer>
 
 </div>
@@ -1459,11 +1461,25 @@ function calculateResult(){
   });
 
   const selectedSemester = document.getElementById('semester').options[document.getElementById('semester').selectedIndex].text;
+  
+  // ADDED: Current date and time generation
+  const generationTime = new Date().toLocaleString('en-IN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+  });
+
+  // MODIFIED: Added Generated On field
   document.getElementById('studentDetails').innerHTML = `
     <div><b>Name:</b> ${studentName}</div>
     <div><b>Roll No:</b> ${rollNumber}</div>
     <div><b>Program:</b> ${className} (NEP)</div>
     <div><b>Semester:</b> ${selectedSemester}</div>
+    <div style="flex-basis: 100%; text-align: right; font-size: 0.8em; margin-top: 5px;"><b>Generated On:</b> ${generationTime}</div>
   `;
  
   const overallDiv = document.getElementById("overall");
