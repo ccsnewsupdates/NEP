@@ -346,6 +346,10 @@ footer {
     color: rgba(255, 255, 255, 0.9);
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
+
+/* Error message blink */
+.error-blink{font-weight:700; color:#d00; animation:blink 1s step-start infinite;}
+@keyframes blink{50%{opacity:0;}}
 </style>
 </head>
 <body>
@@ -490,6 +494,8 @@ footer {
       <button onclick="calculateResult()">Calculate Result</button>
       <button onclick="resetForm()">Reset</button>
   </div>
+
+<div id="errorMsg" class="error-blink" style="display:none; text-align:center; margin:12px 0; font-weight:1000; color:#FFFFFF;">Enter Marks of All Subjects/Name/Roll Number</div>
 </div>
 
 <footer>
@@ -1310,6 +1316,17 @@ function addMajorTheory(){ majorTheoryCount++; addSubject("majorTheorySubjects",
 function addMajorPractical(){ majorPracticalCount++; addSubject("majorPracticalSubjects","Major Practical "+majorPracticalCount,"majorPracticalExternal","majorPracticalInternal", "Major (Practical)"); }
 function addProject(){ projectCount++; addSubject("projectSubjects","Project "+projectCount,"projectMarks",null, "Project", "Total", ""); }
 
+// --- Error helpers & state flag ---
+window.gradeCardReady = false;
+function showError(msg){
+  var el = document.getElementById('errorMsg');
+  if(el){ el.textContent = msg || 'Enter Marks of All Subjects'; el.style.display = 'block'; }
+}
+function hideError(){
+  var el = document.getElementById('errorMsg');
+  if(el){ el.style.display = 'none'; }
+}
+
 function calculateResult(){
   const studentName = document.getElementById('studentName').value;
   const rollNumber = document.getElementById('rollNumber').value;
@@ -1317,13 +1334,37 @@ function calculateResult(){
   const semester = document.getElementById('semester').value;
 
   if (!studentName || !rollNumber || !className || !semester) {
-    alert("Please fill in all Student Information, Class, and Semester.");
+    showError("Enter Marks of All Subjects");
     return;
   }
  
   const tbody=document.querySelector("#resultTable tbody"); tbody.innerHTML="";
   let graceLeft=maxGrace, remainingGraceSubjects=maxGraceSubjects;
   let subjects=[];
+
+  // --- Custom Validation: Name, Roll, 3 Major (Theory) + 1 Co-Curricular (both INT & EXT) ---
+  hideError();
+  // Name & Roll check (same error message per requirement)
+  if(!studentName || !rollNumber){ showError('Enter Marks of All Subjects'); return; }
+  // Count Major Theory with both EXT & INT filled (value not empty string)
+  var mtDivs = document.querySelectorAll('#majorTheorySubjects .subject');
+  var mtCount = 0;
+  mtDivs.forEach(function(div){
+    var extEl = div.querySelector('.majorTheoryExternal');
+    var intEl = div.querySelector('.majorTheoryInternal');
+    var extVal = extEl ? String(extEl.value).trim() : '';
+    var intVal = intEl ? String(intEl.value).trim() : '';
+    if(extVal !== '' && intVal !== ''){ mtCount++; }
+  });
+  // Co-Curricular: both must be filled
+  var coExtEl = document.querySelector('#coCurricularSection .coExternal');
+  var coIntEl = document.querySelector('#coCurricularSection .coInternal');
+  var coExtVal = coExtEl ? String(coExtEl.value).trim() : '';
+  var coIntVal = coIntEl ? String(coIntEl.value).trim() : '';
+  var coOK = (coExtVal !== '' && coIntVal !== '');
+  if(mtCount < 3 || !coOK){ showError('Enter Marks of All Subjects'); return; }
+
+
 
   const processMultipleSubjects = (containerSelector, type, extClass, intClass) => {
       const subjectDivs = document.querySelectorAll(`${containerSelector} .subject`);
@@ -1446,7 +1487,7 @@ function calculateResult(){
     congratsDiv.classList.add('flash-animation');
   }
  
-  openModal();
+  window.gradeCardReady = true; openModal();
 }
 
 function openModal() { document.getElementById('resultModal').style.display = 'flex'; }
@@ -1460,6 +1501,8 @@ window.onclick = function(event) {
 
 function resetForm(){ location.reload(); }
 function downloadPDF(){
+  if(!window.gradeCardReady){ showError('Enter Marks of All Subjects'); return; }
+
   const element=document.getElementById("gradeCard");
   const studentName = document.getElementById('studentName').value || 'student';
   const rollNumber = document.getElementById('rollNumber').value || '0000';
