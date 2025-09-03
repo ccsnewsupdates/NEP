@@ -495,7 +495,7 @@ footer {
       <button onclick="resetForm()">Reset</button>
   </div>
 
-<div id="errorMsg" class="error-blink" style="display:none; text-align:center; margin:12px 0; font-weight:1000; color:#FFFFFF;">Enter Marks of All Subjects/Name/Roll Number</div>
+<div id="errorMsg" class="error-blink" style="display:none; text-align:center; margin:12px 0; font-weight:1000; color:#FFFFFF;">Enter Name/Roll Number/Marks of All Subjects</div>
 </div>
 
 <footer>
@@ -1320,7 +1320,7 @@ function addProject(){ projectCount++; addSubject("projectSubjects","Project "+p
 window.gradeCardReady = false;
 function showError(msg){
   var el = document.getElementById('errorMsg');
-  if(el){ el.textContent = msg || 'Enter Marks of All Subjects'; el.style.display = 'block'; }
+  if(el){ el.textContent = msg || 'Enter Name/Roll Number/Marks of All Subjects'; el.style.display = 'block'; }
 }
 function hideError(){
   var el = document.getElementById('errorMsg');
