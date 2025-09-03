@@ -470,7 +470,7 @@ footer {
       </div>
   </div>
   
-  <div class="subject-section">
+  <div class="subject-section" id="coCurricularSection">
       <h2 class="section-title">Co-Curricular</h2>
       <div class="subject">
         <label>Co-Curricular:</label>
@@ -1368,7 +1368,8 @@ function calculateResult(){
   // Process single-entry subjects
   processSingleSubject("#minorSection .subject", "minor", "minorCode", "minorExternal", "minorInternal");
   processSingleSubject("#skillSection .subject", "skill", "skillCode", "skillTheory", "skillPractical");
-  processSingleSubject(".coCurricular", "coCurricular", "coCurricular", "coExternal", "coInternal");
+  // FIX 2 of 2: Corrected the selector for the Co-Curricular section.
+  processSingleSubject("#coCurricularSection .subject", "coCurricular", "coCurricular", "coExternal", "coInternal");
 
   function checkPass(subj,extTotal){
     const total=subj.internal+extTotal;
