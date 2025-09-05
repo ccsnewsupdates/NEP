@@ -243,7 +243,7 @@ footer {
 <div class="container">
 
 <div style="text-align: center; margin-bottom: 15px;">
-    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjqY-v50ga2u1Y440-i-kDMwMJuam4pGcrIq7R4Y-L4oFRCr-rG0uUJ2oeiQyOKcrL-u2aBvQY5Xb_2uYsk1RAdyT1_H-wX8i-xApfxoP5wY_aR-2J-p2h7oP-m_L-UqFjA/s1600/logo-modified.png" alt="CCSU News & Updates Logo" style="max-width: 150px; border-radius: 50%;">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAMAAAA8xSg3AAAAVFBMVEX////AAD/dAD+aQD8YgD4WgD3VgD9ZwD5XAD/cwD/eAD2UgD4WgD7YwD+bAD/gAD/iQD/lAD/nwD8aAD/qQD/sQD/uQD/xQD/0gD/3gD/6wD/9gBvHjqkAAADdElEQVR4nO2byXKrMBSGExGAqqIge4f3f8kDq6gsCaHgnJk5M+f7fWBlCST5xBxjAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADYVe73w7cffR2z63A4HM5vD/cu3Wz/f88b+8T2dNcHu83e/Xg/YB/24x6/3X/8P2I/eT5/Pj/e/3r/5y39Q+w4/Pj/Oftf8z7+8Y9/H38eD1u+4i8lvyb/Lf9W/g3/Lf/S3n/Vfy/++P38K20t/uH7J3bdgYvQ5f8XFqF/++P386+0tfhf9X/+P6Jv+Y/E3+J/if9m/h3/Tfy/439rG23xPzZ8t1hE1+JPi3+KPy3+h/lv+V/a/1f99x5/H7/4t9gL3s8f759//3v2s/e7v21L7Pj6i/vH3/8ef/hB9hP3r/4c/axz8u+y/7z/sf/h9hP3n+fP58/P3724x/xR/xv/F/+5X/k33M/+y/7z/z/0V/3j/z/wZ/xv/Ff/B/7P/Of/c//1//P/619yH/Of9Z/5n/6f/5v/5X+c/8L/9P/U/8L/ov/F/5L/0P+i/5X/pP/J/4X/rP+p/8X/wP/W/8L/yP/E/8L/3P+i/8X/n/+J/8X/2f/B/9b/yv/c/8z/wv+x/5n/sf+Z/7H/if+R/4n/kf+h/0X/a/8L/5v/1/+d/4n/xf/Q/7z/7P/E/7z/rP/8/+j/1v/e/8x/5H/i/x3/qf+J/1n/U/+r/uP/l/+5/2X/if9l/1v/5/7n/if+F/2v/c/+z/zP/W//7/0v+y/97/ov+i/7X/l/9b/rv/1/5f/V/1H/h/9H/W/+b/uv+F/2n/V/+L/of+l/1X/a/+7/n/+d/7H/s/+V/7n/Xf+r/uP/t/+3/n/+9/5H/m/+x/03/E/97/4v+V/53/df8b/zP/U/+T/pP+9/7v+4/7H/Rf9b/yf/C/9z/tP+J/5n/lf+5/4H/m/+d/5n/q/+R/7H/m/+x/7n/mf+N/5n/qf+V/53/l/+J/6H/rf95/zP/M//T/lP/if/R/2//C/+z/oP+R/5n/hf9L/rv+l/6v/1/9H/R/8b/zP/I/8j/3P/c//z/rP+J/5H/m/+p/6n/df9z/ov+F/2v/S/7r/h/+n/h/+p/7H/Xf9r/7P+p/7v+p/73/W/+H/t/6X/m/+N/8D/6v+t/7X/W/9L/ov/R/2P/c//D/y//A//7/1//a/9r/sf/B/1v+x/2P/G/9r/rf+9/2P/O//L/rv/D/97/sP+d/4n/yf+p/5v/qf+l/5f/0P/B/97/wv+o/5X/1/+p/7n/df9r/6v+9/7f+x/7P/9f+x/13/if+R/7H/s/+p/5v/if+t/23/e/+L/m/+F/5n/pf+R/7v/gf+l/53/Rf/b/u//j/1/+7/5H/c//L/y//G/9b/8P+t/7H/W//j/3/+n/v/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwdV/tB8gYd5vJAAAAAElFTkSuQmCC" alt="CCSU News & Updates Logo" style="max-width: 150px; border-radius: 50%;">
 </div>
 
 <div class="main-header">
@@ -1322,7 +1322,8 @@ function calculateResult(){
   processMultipleSubjects("#majorPracticalSubjects", "majorPractical", "majorPracticalExternal", "majorPracticalInternal");
   processMultipleSubjects("#projectSubjects", "project", "projectMarks", null);
   processSingleSubject("#minorSection .subject", "minor", "minorCode", "minorExternal", "minorInternal");
-  processSingleSubject("#skillSection .subject", "skill", "skillCode", "skillPractical", "skillTheory"); // Note: Skill Dev. has practical and theory, handled as ext and internal
+  // Skill Dev. has practical (ext) and theory (internal)
+  processSingleSubject("#skillSection .subject", "skill", "skillCode", "skillPractical", "skillTheory");
   processSingleSubject("#coCurricularSection .subject", "coCurricular", "coCurricular", "coExternal", "coInternal");
 
   function checkPass(subj,extTotal){
@@ -1376,17 +1377,13 @@ function calculateResult(){
     if(anyFailAfterGrace && subj.grace>0) remark = `Grace Cancelled - ${remark}`;
     
     // For skill dev, show TH and PR separately
-    let extMarks = subj.ext - subj.grace;
-    let intMarks = subj.internal;
-    if(subj.type === 'skill') {
-        extMarks = subj.ext; // Skill practical is in ext
-        intMarks = subj.internal; // Skill theory is in internal
-    }
-
+    let obtainedMarks = subj.ext - subj.grace;
+    let internalMarks = subj.internal;
+    
     const trClass=subj.grace>0?"graceApplied":"";
     const statusClass = status==='Pass'?'pass':'fail';
     const subjectTypeText = subjectTypeMap[subj.type] || subj.type;
-    tbodyHTML += `<tr class="${trClass}"><td>${subjectTypeText}</td><td>${subj.code}</td><td>${subj.name}</td><td>${extMarks}</td><td class="grace">${anyFailAfterGrace ? 0 : subj.grace}</td><td>${subj.ext}</td><td>${intMarks}</td><td>${total}</td><td class="${statusClass}">${status}</td><td>${remark}</td></tr>`;
+    tbodyHTML += `<tr class="${trClass}"><td>${subjectTypeText}</td><td>${subj.code}</td><td>${subj.name}</td><td>${obtainedMarks}</td><td class="grace">${anyFailAfterGrace ? 0 : subj.grace}</td><td>${subj.ext}</td><td>${internalMarks}</td><td>${total}</td><td class="${statusClass}">${status}</td><td>${remark}</td></tr>`;
   });
 
   const selectedSemester = document.getElementById('semester').options[document.getElementById('semester').selectedIndex].text;
@@ -1469,7 +1466,9 @@ function openResultInNewTab(studentDetailsHTML, tbodyHTML, overallHTML, overallC
             }
         };
     `;
-
+    
+    const logoDataUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAMAAAA8xSg3AAAAVFBMVEX////AAD/dAD+aQD8YgD4WgD3VgD9ZwD5XAD/cwD/eAD2UgD4WgD7YwD+bAD/gAD/iQD/lAD/nwD8aAD/qQD/sQD/uQD/xQD/0gD/3gD/6wD/9gBvHjqkAAADdElEQVR4nO2byXKrMBSGExGAqqIge4f3f8kDq6gsCaHgnJk5M+f7fWBlCST5xBxjAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADYVe73w7cffR2z63A4HM5vD/cu3Wz/f88b+8T2dNcHu83e/Xg/YB/24x6/3X/8P2I/eT5/Pj/e/3r/5y39Q+w4/Pj/Oftf8z7+8Y9/H38eD1u+4i8lvyb/Lf9W/g3/Lf/S3n/Vfy/++P38K20t/uH7J3bdgYvQ5f8XFqF/++P386+0tfhf9X/+P6Jv+Y/E3+J/if9m/h3/Tfy/439rG23xPzZ8t1hE1+JPi3+KPy3+h/lv+V/a/1f99x5/H7/4t9gL3s8f759//3v2s/e7v21L7Pj6i/vH3/8ef/hB9hP3r/4c/axz8u+y/7z/sf/h9hP3n+fP58/P3724x/xR/xv/F/+5X/k33M/+y/7z/z/0V/3j/z/wZ/xv/Ff/B/7P/Of/c//1//P/619yH/Of9Z/5n/6f/5v/5X+c/8L/9P/U/8L/ov/F/5L/0P+i/5X/pP/J/4X/rP+p/8X/wP/W/8L/yP/E/8L/3P+i/8X/n/+J/8X/2f/B/9b/yv/c/8z/wv+x/5n/sf+Z/7H/if+R/4n/kf+h/0X/a/8L/5v/1/+d/4n/xf/Q/7z/7P/E/7z/rP/8/+j/1v/e/8x/5H/i/x3/qf+J/1n/U/+r/uP/l/+5/2X/if9l/1v/5/7n/if+F/2v/c/+z/zP/W//7/0v+y/97/ov+i/7X/l/9b/rv/1/5f/V/1H/h/9H/W/+b/uv+F/2n/V/+L/of+l/1X/a/+7/n/+d/7H/s/+V/7n/Xf+r/uP/t/+3/n/+9/5H/m/+x/03/E/97/4v+V/53/df8b/zP/U/+T/pP+9/7v+4/7H/Rf9b/yf/C/9z/tP+J/5n/lf+5/4H/m/+d/5n/q/+R/7H/m/+x/7n/mf+N/5n/qf+V/53/l/+J/6H/rf95/zP/M//T/lP/if/R/2//C/+z/oP+R/5n/hf+L/rv+l/6v/1/9H/R/8b/zP/I/8j/3P/c//z/rP+J/5H/m/+p/6n/df9z/ov+F/2v/S/7r/h/+n/h/+p/7H/Xf9r/7P+p/7v+p/73/W/+H/t/6X/m/+N/8D/6v+t/7X/W/9L/ov/R/2P/c//D/y//A//7/1//a/9r/sf/B/1v+x/2P/G/9r/rf+9/2P/O//L/rv/D/97/sP+d/4n/yf+p/5v/qf+l/5f/0P/B/97/wv+o/5X/1/+p/7n/df9r/6v+9/7f+x/7P/9f+x/13/if+R/7H/s/+p/5v/if+t/23/e/+L/m/+F/5n/pf+R/7v/gf+l/53/Rf/b/u//j/1/+7/5H/c//L/y//G/9b/8P+t/7H/W//j/3/+n/v/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwdV/tB8gYd5vJAAAAAElFTkSuQmCC";
+    
     const newPageHTML = `
         <!DOCTYPE html>
         <html lang="en">
@@ -1482,7 +1481,7 @@ function openResultInNewTab(studentDetailsHTML, tbodyHTML, overallHTML, overallC
         <body>
             <div id="gradeCard">
                 <div class="header-logo">
-                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjqY-v50ga2u1Y440-i-kDMwMJuam4pGcrIq7R4Y-L4oFRCr-rG0uUJ2oeiQyOKcrL-u2aBvQY5Xb_2uYsk1RAdyT1_H-wX8i-xApfxoP5wY_aR-2J-p2h7oP-m_L-UqFjA/s1600/logo-modified.png" alt="Logo">
+                    <img src="${logoDataUri}" alt="Logo">
                     <div class="university-info">
                         <h3>Chaudhary Charan Singh University, Meerut</h3>
                         <h4>Unofficial Grade Card (NEP)</h4>
