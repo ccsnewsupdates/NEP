@@ -35,25 +35,25 @@ body {
 
 .main-header {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 .main-header h1 {
-    font-size: 2em;
+    font-size: 1.5em; 
     font-weight: 700;
     color: #E63817;
     text-shadow: none;
     margin: 0;
 }
 .main-header h2 {
-    font-size: 1.5em;
+    font-size: 1.1em;
     font-weight: 600;
     color: #555;
-    margin-top: 0px;
+    margin-top: 5px;
     text-shadow: none;
 }
 
 h2.section-title {
-  font-size: 1.2em;
+  font-size: 0.9em;
   margin-top: 10px;
   margin-bottom: 12px;
   color: var(--primary-color);
@@ -64,14 +64,33 @@ h2.section-title {
 
 .description {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 12px; /* Reduced */
   background: rgba(255, 255, 255, 0.7);
-  padding: 15px;
+  padding: 10px 15px; 
   border-radius: 15px;
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.description p {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+.description .sub-heading {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #d9534f;
+}
+.description .disclaimer-title {
+    font-weight: 600;
+    margin-top: 10px;
+    color: #500;
+}
+.description .disclaimer-text {
+    font-size: 0.5em;
+    text-align: left;
+    color: #333;
 }
 
 
@@ -80,7 +99,7 @@ h2.section-title {
     background: var(--card-bg);
     border-radius: 12px;
     box-shadow: 0 5px 15px var(--shadow-color);
-    margin-bottom: 20px;
+    margin-bottom: 12px; /* Reduced */
     overflow: hidden;
     backdrop-filter: blur(5px);
    -webkit-backdrop-filter: blur(5px);
@@ -95,9 +114,9 @@ h2.section-title {
     border: none;
     outline: none;
     cursor: pointer;
-    padding: 14px 16px;
+    padding: 12px 14px;
     transition: all 0.3s ease;
-    font-size: 1em;
+    font-size: 0.7em;
     font-weight: 600;
     color: var(--primary-color);
     flex: 1;
@@ -116,10 +135,14 @@ h2.section-title {
 }
 .tab-content {
     display: none;
-    padding: 15px;
+    padding: 12px;
     text-align: center;
-    font-size: 0.9em;
+    font-size: 0.85em;
     border-top: none;
+}
+.tab-content .channel-description {
+    color: #333;
+    font-weight: 600;
 }
 .tab-content b { color: var(--primary-color); }
 .tab-content small { font-size: 0.8em; display: block; }
@@ -174,6 +197,7 @@ h2.section-title {
 }
 
 .subject input[type=number],
+.subject input[type=text],
 select {
   padding: 8px 10px;
   border-radius: 8px;
@@ -187,7 +211,7 @@ select {
 }
 .subject input[type=number] { width: 60px; text-align: center; }
 
-button, .social-button {
+button {
   padding: 12px 25px;
   margin: 5px;
   cursor: pointer;
@@ -203,6 +227,21 @@ button, .social-button {
   display: inline-block;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
+.social-buttons-container {
+    display: flex;
+    justify-content: center;
+    align-items: stretch; /* Makes buttons equal height */
+    gap: 10px; /* Creates space between buttons */
+}
+.social-button {
+    flex: 1; /* Each button will take equal space */
+    max-width: 250px; /* Optional: prevent buttons from being too wide */
+    padding: 10px 5px;
+    font-size: 0.8em;
+    text-align: center;
+    white-space: normal; /* Allows text to wrap */
+    line-height: 1.2;
+}
 button:hover, .social-button:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.4);
@@ -217,6 +256,30 @@ button:active, .social-button:active {
     background: linear-gradient(45deg, #e52d27 0%, #b31217 100%);
 }
 
+.check-result-btn {
+    padding: 12px 25px; 
+    font-size: 1.1em; 
+    background: linear-gradient(45deg, #ff4e50, #f9d423);
+    margin-top: 15px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 8px 25px rgba(255, 78, 80, 0.6);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+}
+
+
 footer {
     text-align: center;
     margin-top: 30px;
@@ -224,6 +287,7 @@ footer {
     font-weight: 600;
     color: #333;
     text-shadow: none;
+    font-size: 0.8em; /* Add this line to make the text smaller */
 }
 
 /* Error message blink */
@@ -242,91 +306,95 @@ footer {
 
 <div class="container">
 
-<div style="text-align: center; margin-bottom: 15px;">
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAMAAAA8xSg3AAAAVFBMVEX////AAD/dAD+aQD8YgD4WgD3VgD9ZwD5XAD/cwD/eAD2UgD4WgD7YwD+bAD/gAD/iQD/lAD/nwD8aAD/qQD/sQD/uQD/xQD/0gD/3gD/6wD/9gBvHjqkAAADdElEQVR4nO2byXKrMBSGExGAqqIge4f3f8kDq6gsCaHgnJk5M+f7fWBlCST5xBxjAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADYVe73w7cffR2z63A4HM5vD/cu3Wz/f88b+8T2dNcHu83e/Xg/YB/24x6/3X/8P2I/eT5/Pj/e/3r/5y39Q+w4/Pj/Oftf8z7+8Y9/H38eD1u+4i8lvyb/Lf9W/g3/Lf/S3n/Vfy/++P38K20t/uH7J3bdgYvQ5f8XFqF/++P386+0tfhf9X/+P6Jv+Y/E3+J/if9m/h3/Tfy/439rG23xPzZ8t1hE1+JPi3+KPy3+h/lv+V/a/1f99x5/H7/4t9gL3s8f759//3v2s/e7v21L7Pj6i/vH3/8ef/hB9hP3r/4c/axz8u+y/7z/sf/h9hP3n+fP58/P3724x/xR/xv/F/+5X/k33M/+y/7z/z/0V/3j/z/wZ/xv/Ff/B/7P/Of/c//1//P/619yH/Of9Z/5n/6f/5v/5X+c/8L/9P/U/8L/ov/F/5L/0P+i/5X/pP/J/4X/rP+p/8X/wP/W/8L/yP/E/8L/3P+i/8X/n/+J/8X/2f/B/9b/yv/c/8z/wv+x/5n/sf+Z/7H/if+R/4n/kf+h/0X/a/8L/5v/1/+d/4n/xf/Q/7z/7P/E/7z/rP/8/+j/1v/e/8x/5H/i/x3/qf+J/1n/U/+r/uP/l/+5/2X/if9l/1v/5/7n/if+F/2v/c/+z/zP/W//7/0v+y/97/ov+i/7X/l/9b/rv/1/5f/V/1H/h/9H/W/+b/uv+F/2n/V/+L/of+l/1X/a/+7/n/+d/7H/s/+V/7n/Xf+r/uP/t/+3/n/+9/5H/m/+x/03/E/97/4v+V/53/df8b/zP/U/+T/pP+9/7v+4/7H/Rf9b/yf/C/9z/tP+J/5n/lf+5/4H/m/+d/5n/q/+R/7H/m/+x/7n/mf+N/5n/qf+V/53/l/+J/6H/rf95/zP/M//T/lP/if/R/2//C/+z/oP+R/5n/hf9L/rv+l/6v/1/9H/R/8b/zP/I/8j/3P/c//z/rP+J/5H/m/+p/6n/df9z/ov+F/2v/S/7r/h/+n/h/+p/7H/Xf9r/7P+p/7v+p/73/W/+H/t/6X/m/+N/8D/6v+t/7X/W/9L/ov/R/2P/c//D/y//A//7/1//a/9r/sf/B/1v+x/2P/G/9r/rf+9/2P/O//L/rv/D/97/sP+d/4n/yf+p/5v/qf+l/5f/0P/B/97/wv+o/5X/1/+p/7n/df9r/6v+9/7f+x/7P/9f+x/13/if+R/7H/s/+p/5v/if+t/23/e/+L/m/+F/5n/pf+R/7v/gf+l/53/Rf/b/u//j/1/+7/5H/c//L/y//G/9b/8P+t/7H/W//j/3/+n/v/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwdV/tB8gYd5vJAAAAAElFTkSuQmCC" alt="CCSU News & Updates Logo" style="max-width: 150px; border-radius: 50%;">
-</div>
-
-<div class="main-header">
-    <h1>CCSU NEWS & UPDATES</h1>
-    <h2>UG NEP Grace Calculator</h2>
-</div>
-
-<div class="description">
-    <p style="font-size: 1.2em; font-weight: 700; color: #d9534f;">Only for NEP BA, BSc, BCom Students</p>
-    <p style="font-weight: 600; margin-top: 15px; color: #500;">(Disclaimer):</p>
-    <p style="font-size: 0.9em; text-align: left; margin-top: 5px; color: #333;">
-        यह पोर्टल CCS University, Meerut की आधिकारिक साइट/ऐप नहीं है। इसे केवल UGNEP परिणाम में Grace Marks की गणना हेतु व्यक्तिगत स्तर पर बनाया गया है।
-        यह CCS University Meerut के पत्रांक संख्या गोप/1976 दिनांक 28-08-2025 के अनुपालन में मात्र सूचनात्मक उपयोग के लिए है। परिणामों में त्रुटि सम्भव है, अतः किसी भी आधिकारिक प्रयोजन हेतु इसका उपयोग न करें।
-    </p>
-</div>
-
-<div class="tab-container">
-    <div class="tab-buttons">
-        <button class="tab-link" onclick="openTab(event, 'Channel1')" id="defaultOpen">Telegram Channel 1</button>
-        <button class="tab-link" onclick="openTab(event, 'Channel2')">Telegram Channel 2</button>
+<div id="welcomeScreen">
+    <div class="main-header">
+        <h1>CCSU News & Updates</h1>
+        <h2>UG NEP Grace Calculator</h2>
     </div>
-    <div id="Channel1" class="tab-content">
-        CCS University Meerut & SSV College Hapur Updates <br>
-        Join Telegram Channel: <a href="https://t.me/ccsnewsupdates" target="_blank">t.me/ccsnewsupdates</a><br>
-        <b>Sanjeev Chauhan</b> <small>Owner</small>
-    </div>
-    <div id="Channel2" class="tab-content">
-        CCS University Meerut & Other Colleges Updates <br>
-        Join Telegram Channel: <a href="https://t.me/CCSUniversityMRT" target="_blank">t.me/CCSUniversityMRT</a><br>
-        <b>Aaditya Chaudhary</b> <small>Owner</small>
-    </div>
-</div>
 
-<div style="text-align: center; margin-bottom: 20px;">
-    <a href="https://linkbio.co/ccsupdates" target="_blank" class="social-button">Other Social Media Links</a>
-    <a href="https://youtu.be/YxxzgcotoU0" target="_blank" class="social-button tutorial-button">Tutorial Video Watch Here</a>
-</div>
-
-<div class="rules">
-<h2 class="section-title">Grace Rules</h2>
-<ul>
-<li>किसी भी student को maximum 5 marks तक Grace मिल सकता है।</li>
-<li>Grace ज़्यादा से ज़्यादा 3 subjects में दिया जाएगा।</li>
-<li>Major Theory / Minor / Practical subjects में पास होने के लिए External कम से कम 25 और Total कम से कम 33 होना चाहिए।</li>
-<li>Skill / Project / Co-Curricular subjects में पास होने के लिए Total कम से कम 40 होना चाहिए।</li>
-<li>अगर किसी भी subject में fail रह जाते हैं तो किसी भी subject में दिया गया Grace cancel हो जाएगा।</li>
-</ul>
-</div>
-
-<div class="subject-section">
-    <h2 class="section-title">Student Information</h2>
-    <div class="subject">
-        <label for="studentName">Student Name:</label>
-        <input type="text" id="studentName" placeholder="Enter Full Name" style="flex-grow:1;">
+    <div class="description">
+        <p class="sub-heading">Only for NEP BA, B.Sc, B.Com Students</p>
+        <p class="disclaimer-title">(Disclaimer):</p>
+        <p class="disclaimer-text">
+            यह पोर्टल CCS University, Meerut की आधिकारिक साइट/ऐप नहीं है। इसे केवल UGNEP परिणाम में Grace Marks की गणना हेतु व्यक्तिगत स्तर पर बनाया गया है।
+            यह CCS University Meerut के पत्रांक संख्या गोप/1976 दिनांक 28-08-2025 के अनुपालन में मात्र सूचनात्मक उपयोग के लिए है। परिणामों में त्रुटि सम्भव है, अतः किसी भी आधिकारिक प्रयोजन हेतु इसका उपयोग न करें।
+        </p>
     </div>
-    <div class="subject">
-        <label for="rollNumber">Roll Number:</label>
-        <input type="text" id="rollNumber" placeholder="Enter Roll Number" style="flex-grow:1;">
+
+    <div class="tab-container">
+        <div class="tab-buttons">
+            <button class="tab-link" onclick="openTab(event, 'Channel1')" id="defaultOpen">Telegram Channel 1</button>
+            <button class="tab-link" onclick="openTab(event, 'Channel2')">Telegram Channel 2</button>
+        </div>
+        <div id="Channel1" class="tab-content">
+            Join Telegram Channel: <span class="channel-description">CCS University Meerut & SSV College Hapur Updates</span><br>
+             <a href="https://t.me/ccsnewsupdates" target="_blank">t.me/ccsnewsupdates</a><br>
+            <b>Sanjeev Chauhan</b> <small>Owner</small>
+        </div>
+        <div id="Channel2" class="tab-content">
+            Join Telegram Channel: <span class="channel-description">CCS University Meerut & Other Colleges Updates</span><br>
+             <a href="https://t.me/CCSUniversityMRT" target="_blank">t.me/CCSUniversityMRT</a><br>
+            <b>Aaditya Chaudhary</b> <small>Owner</small>
+        </div>
+    </div>
+
+    <div class="social-buttons-container">
+        <a href="https://linkbio.co/ccsupdates" target="_blank" class="social-button">Other Social Media Links</a>
+        <a href="https://youtu.be/YxxzgcotoU0" target="_blank" class="social-button tutorial-button">Tutorial Video Watch Here</a>
+    </div>
+
+    <div style="text-align:center;">
+        <button id="checkResultBtn" class="check-result-btn">Check Result</button>
     </div>
 </div>
 
-<div class="subject-section">
-    <h2 class="section-title">Select Class & Semester</h2>
-    <div class="subject">
-        <label for="className">Class:</label>
-        <select id="className" onchange="updateAllDropdowns()">
-          <option value="">--Select Class--</option>
-          <option value="BA">BA</option>
-          <option value="BSc.">BSc.</option>
-          <option value="BCom.">BCom.</option>
-        </select>
+<div id="step1" style="display:none;">
+    <div class="rules">
+    <h2 class="section-title">Grace Rules</h2>
+    <ul>
+    <li>किसी भी student को maximum 5 marks तक Grace मिल सकता है।</li>
+    <li>Grace ज़्यादा से ज़्यादा 3 subjects में दिया जाएगा।</li>
+    <li>Major Theory / Minor / Practical subjects में पास होने के लिए External कम से कम 25 और Total कम से कम 33 होना चाहिए।</li>
+    <li>Skill / Project / Co-Curricular subjects में पास होने के लिए Total कम से कम 40 होना चाहिए।</li>
+    <li>अगर किसी भी subject में fail रह जाते हैं तो किसी भी subject में दिया गया Grace cancel हो जाएगा।</li>
+    </ul>
     </div>
-    <div class="subject">
-        <label for="semester">Semester:</label>
-        <select id="semester" onchange="updateAllDropdowns()">
-          <option value="">--Select Semester--</option>
-          <option value="1">1st Semester</option>
-          <option value="2">2nd Semester</option>
-          <option value="3">3rd Semester</option>
-          <option value="4">4th Semester</option>
-          <option value="5">5th Semester</option>
-          <option value="6">6th Semester</option>
-        </select>
+
+    <div class="subject-section">
+        <h2 class="section-title">Student Information</h2>
+        <div class="subject">
+            <label for="studentName">Student Name:</label>
+            <input type="text" id="studentName" placeholder="Enter Full Name" style="flex-grow:1;">
+        </div>
+        <div class="subject">
+            <label for="rollNumber">Roll Number:</label>
+            <input type="text" id="rollNumber" placeholder="Enter Roll Number" style="flex-grow:1;">
+        </div>
+    </div>
+
+    <div class="subject-section">
+        <h2 class="section-title">Select Class & Semester</h2>
+        <div class="subject">
+            <label for="className">Class:</label>
+            <select id="className" onchange="updateAllDropdowns()">
+              <option value="">--Select Class--</option>
+              <option value="BA">BA</option>
+              <option value="BSc.">BSc.</option>
+              <option value="BCom.">BCom.</option>
+            </select>
+        </div>
+        <div class="subject">
+            <label for="semester">Semester:</label>
+            <select id="semester" onchange="updateAllDropdowns()">
+              <option value="">--Select Semester--</option>
+              <option value="1">1st Semester</option>
+              <option value="2">2nd Semester</option>
+              <option value="3">3rd Semester</option>
+              <option value="4">4th Semester</option>
+              <option value="5">5th Semester</option>
+              <option value="6">6th Semester</option>
+            </select>
+        </div>
     </div>
 </div>
 
@@ -400,6 +468,7 @@ footer {
 
 <script>
 // --- START: Integrated Course Data from CSV ---
+// The long 'courseData' array is omitted here for brevity, but it is included in the actual code.
 const courseData = [
     { class: "BA", subjectType: "Major (Theory)", subject: "Hindi", semester: "1", code: "A010101T" },
     { class: "BA", subjectType: "Major (Theory)", subject: "Hindi", semester: "2", code: "A010201T" },
@@ -1077,11 +1146,14 @@ function updateAllDropdowns() {
     const marksSection = document.getElementById("marksSection");
 
     if (sem === "" || className === "") {
-        marksSection.style.display = "none";
         return;
     }
     
-    marksSection.style.display = "block";
+    // --- NEW: Multi-step form logic ---
+    document.getElementById('welcomeScreen').style.display = 'none';
+    document.getElementById('step1').style.display = 'none';
+    marksSection.style.display = 'block';
+    
     semTitle.innerHTML = "Enter Marks for Semester: " + sem;
     document.getElementById("minorSection").style.display = (sem === "5" || sem === "6") ? "none" : "block";
     document.getElementById("skillSection").style.display = (sem === "5" || sem === "6") ? "none" : "block";
@@ -1094,6 +1166,12 @@ function updateAllDropdowns() {
     populateDropdownGroup('.skillCode', 'Skill Development', true);
     populateDropdownGroup('#projectSubjects', 'Project');
     populateDropdownGroup('.coCurricular', 'Co-Curricular', true);
+
+    // Focus on the first input of the new screen
+    const firstInput = document.querySelector('#majorTheorySubjects .majorTheoryExternal');
+    if (firstInput) {
+        firstInput.focus();
+    }
 }
 
 
@@ -1376,14 +1454,16 @@ function calculateResult(){
     } else { remark="-"; }
     if(anyFailAfterGrace && subj.grace>0) remark = `Grace Cancelled - ${remark}`;
     
-    // For skill dev, show TH and PR separately
     let obtainedMarks = subj.ext - subj.grace;
     let internalMarks = subj.internal;
     
-    const trClass=subj.grace>0?"graceApplied":"";
-    const statusClass = status==='Pass'?'pass':'fail';
+    const graceValue = anyFailAfterGrace ? 0 : subj.grace;
+    const graceDisplay = graceValue > 0 ? `<span style="color: darkred; font-size: 1.1em; font-weight: bold;">${graceValue}</span>` : '-';
+
+    const trClass = graceValue > 0 ? "graceApplied" : "";
+    const statusClass = status === 'Pass' ? 'pass' : 'fail';
     const subjectTypeText = subjectTypeMap[subj.type] || subj.type;
-    tbodyHTML += `<tr class="${trClass}"><td>${subjectTypeText}</td><td>${subj.code}</td><td>${subj.name}</td><td>${obtainedMarks}</td><td class="grace">${anyFailAfterGrace ? 0 : subj.grace}</td><td>${subj.ext}</td><td>${internalMarks}</td><td>${total}</td><td class="${statusClass}">${status}</td><td>${remark}</td></tr>`;
+    tbodyHTML += `<tr class="${trClass}"><td>${subjectTypeText}</td><td>${subj.code}</td><td>${subj.name}</td><td>${obtainedMarks}</td><td class="grace">${graceDisplay}</td><td>${subj.ext}</td><td>${internalMarks}</td><td>${total}</td><td class="${statusClass}">${status}</td><td>${remark}</td></tr>`;
   });
 
   const selectedSemester = document.getElementById('semester').options[document.getElementById('semester').selectedIndex].text;
@@ -1392,15 +1472,15 @@ function calculateResult(){
   
   let overallHTML, overallClassName, congratsHTML, playSound;
   if(anyFailAfterGrace){
-    const failMessage='FAIL (ग्रेस मिलने के बाद भी यदि किसी भी विषय में बैक रहती है तो किसी भी विषय में ग्रेस नहीं मिलेगा)';
-    overallHTML=`Overall Result: <span class="fail">${failMessage}</span>`;
+    const failMessage='(ग्रेस मिलने के बाद भी यदि किसी भी विषय में बैक रहती है तो किसी भी विषय में ग्रेस नहीं मिलेगा)';
+    overallHTML=`Overall Result: <span class="fail">FAIL</span><br><small style="color: #333; font-weight: normal;">${failMessage}</small>`;
     overallClassName = 'overall-fail';
     congratsHTML = `<h2>Result</h2>`;
     playSound = false;
   } else {
     let totalGraceApplied = subjects.reduce((sum,subj)=>sum+(anyFailAfterGrace ? 0 : subj.grace),0);
     if(totalGraceApplied>0){
-      overallHTML=`Overall Result: <span class="pass">PASS with Grace (${totalGraceApplied} Marks)</span>`;
+      overallHTML=`Overall Result: <span class="pass">PASS</span><br><small style="color: #333; font-weight: normal;">with Grace (${totalGraceApplied} Marks)</small>`;
     } else {
       overallHTML=`Overall Result: <span class="pass">PASS</span>`;
     }
@@ -1420,7 +1500,7 @@ function openResultInNewTab(studentDetailsHTML, tbodyHTML, overallHTML, overallC
         #gradeCard { background: #ffffff; padding: 25px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); max-width: 900px; margin: 20px auto; border: 1px solid #ddd; }
         .header-logo { display: flex; justify-content: center; align-items: center; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; margin-bottom: 15px; }
         .header-logo img { max-width: 50px; margin-right: 50px; }
-        .header-logo .university-info { text-align: left; }
+        .header-logo .university-info { text-align: center; }
         .header-logo h3 { margin: 0; color: #3498db; font-size: 1.5em; font-weight: 700; }
         .header-logo h4 { margin: 5px 0 0; font-weight: 600; color: #555; font-size: 1.1em; }
         #studentDetails { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 20px; font-size: 0.95em; padding: 15px; background: #f9fafb; border-radius: 12px; border: 1px solid #e1e8ed; }
@@ -1433,11 +1513,11 @@ function openResultInNewTab(studentDetailsHTML, tbodyHTML, overallHTML, overallC
         tbody tr:hover { background-color: #f1f8ff; }
         .pass { color: #27ae60; font-weight: bold; }
         .fail { color: #e74c3c; font-weight: bold; }
-        .grace { color: #f39c12; font-weight: bold; }
+        .grace { font-weight: bold; }
         .graceApplied { background-color: #fef9e7 !important; }
-        #overall { font-size: 1.3em; text-align: center; margin-top: 25px; padding: 15px; border-radius: 12px; font-weight: 700; }
-        .overall-pass { background-color: #eafaf1; border: 1px solid #27ae60; color: #27ae60; }
-        .overall-fail { background-color: #fdedec; border: 1px solid #e74c3c; color: #e74c3c; }
+        #overall { font-size: 1.3em; text-align: center; margin-top: 25px; padding: 15px; border-radius: 12px; font-weight: 700; line-height: 1.5; }
+        .overall-pass { background-color: #eafaf1; border: 1px solid #27ae60; color: #333; }
+        .overall-fail { background-color: #fdedec; border: 1px solid #e74c3c; color: #333; }
         #note { margin-top: 25px; font-size: 0.8em; text-align: justify; color: #7f8c8d; background-color: #fcfcfc; padding: 15px; border-radius: 8px; border-left: 5px solid #bdc3c7; }
         button { padding: 12px 25px; margin: 10px 5px; cursor: pointer; background: linear-gradient(45deg, #3498db, #2980b9); color: #fff; border: none; border-radius: 30px; font-size: 1em; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         button:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
@@ -1467,8 +1547,6 @@ function openResultInNewTab(studentDetailsHTML, tbodyHTML, overallHTML, overallC
         };
     `;
     
-    const logoDataUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAMAAAA8xSg3AAAAVFBMVEX////AAD/dAD+aQD8YgD4WgD3VgD9ZwD5XAD/cwD/eAD2UgD4WgD7YwD+bAD/gAD/iQD/lAD/nwD8aAD/qQD/sQD/uQD/xQD/0gD/3gD/6wD/9gBvHjqkAAADdElEQVR4nO2byXKrMBSGExGAqqIge4f3f8kDq6gsCaHgnJk5M+f7fWBlCST5xBxjAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADYVe73w7cffR2z63A4HM5vD/cu3Wz/f88b+8T2dNcHu83e/Xg/YB/24x6/3X/8P2I/eT5/Pj/e/3r/5y39Q+w4/Pj/Oftf8z7+8Y9/H38eD1u+4i8lvyb/Lf9W/g3/Lf/S3n/Vfy/++P38K20t/uH7J3bdgYvQ5f8XFqF/++P386+0tfhf9X/+P6Jv+Y/E3+J/if9m/h3/Tfy/439rG23xPzZ8t1hE1+JPi3+KPy3+h/lv+V/a/1f99x5/H7/4t9gL3s8f759//3v2s/e7v21L7Pj6i/vH3/8ef/hB9hP3r/4c/axz8u+y/7z/sf/h9hP3n+fP58/P3724x/xR/xv/F/+5X/k33M/+y/7z/z/0V/3j/z/wZ/xv/Ff/B/7P/Of/c//1//P/619yH/Of9Z/5n/6f/5v/5X+c/8L/9P/U/8L/ov/F/5L/0P+i/5X/pP/J/4X/rP+p/8X/wP/W/8L/yP/E/8L/3P+i/8X/n/+J/8X/2f/B/9b/yv/c/8z/wv+x/5n/sf+Z/7H/if+R/4n/kf+h/0X/a/8L/5v/1/+d/4n/xf/Q/7z/7P/E/7z/rP/8/+j/1v/e/8x/5H/i/x3/qf+J/1n/U/+r/uP/l/+5/2X/if9l/1v/5/7n/if+F/2v/c/+z/zP/W//7/0v+y/97/ov+i/7X/l/9b/rv/1/5f/V/1H/h/9H/W/+b/uv+F/2n/V/+L/of+l/1X/a/+7/n/+d/7H/s/+V/7n/Xf+r/uP/t/+3/n/+9/5H/m/+x/03/E/97/4v+V/53/df8b/zP/U/+T/pP+9/7v+4/7H/Rf9b/yf/C/9z/tP+J/5n/lf+5/4H/m/+d/5n/q/+R/7H/m/+x/7n/mf+N/5n/qf+V/53/l/+J/6H/rf95/zP/M//T/lP/if/R/2//C/+z/oP+R/5n/hf+L/rv+l/6v/1/9H/R/8b/zP/I/8j/3P/c//z/rP+J/5H/m/+p/6n/df9z/ov+F/2v/S/7r/h/+n/h/+p/7H/Xf9r/7P+p/7v+p/73/W/+H/t/6X/m/+N/8D/6v+t/7X/W/9L/ov/R/2P/c//D/y//A//7/1//a/9r/sf/B/1v+x/2P/G/9r/rf+9/2P/O//L/rv/D/97/sP+d/4n/yf+p/5v/qf+l/5f/0P/B/97/wv+o/5X/1/+p/7n/df9r/6v+9/7f+x/7P/9f+x/13/if+R/7H/s/+p/5v/if+t/23/e/+L/m/+F/5n/pf+R/7v/gf+l/53/Rf/b/u//j/1/+7/5H/c//L/y//G/9b/8P+t/7H/W//j/3/+n/v/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwdV/tB8gYd5vJAAAAAElFTkSuQmCC";
-    
     const newPageHTML = `
         <!DOCTYPE html>
         <html lang="en">
@@ -1481,7 +1559,6 @@ function openResultInNewTab(studentDetailsHTML, tbodyHTML, overallHTML, overallC
         <body>
             <div id="gradeCard">
                 <div class="header-logo">
-                    <img src="${logoDataUri}" alt="Logo">
                     <div class="university-info">
                         <h3>Chaudhary Charan Singh University, Meerut</h3>
                         <h4>Unofficial Grade Card (NEP)</h4>
@@ -1533,6 +1610,52 @@ function openResultInNewTab(studentDetailsHTML, tbodyHTML, overallHTML, overallC
 
 
 function resetForm(){ location.reload(); }
+
+// --- START: Page Interaction Logic ---
+document.addEventListener('DOMContentLoaded', (event) => {
+    const checkResultBtn = document.getElementById('checkResultBtn');
+    const step1 = document.getElementById('step1');
+    const studentName = document.getElementById('studentName');
+    const rollNumber = document.getElementById('rollNumber');
+    const className = document.getElementById('className');
+    const semester = document.getElementById('semester');
+
+    checkResultBtn.addEventListener('click', function() {
+        step1.style.display = 'block';
+        const rulesSection = document.querySelector('.rules');
+        rulesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        setTimeout(() => {
+            const studentInfoSection = studentName.closest('.subject-section');
+            if (studentInfoSection) {
+                 studentInfoSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            studentName.focus();
+        }, 3000); // 3 seconds delay
+    });
+
+    const handleEnterNavigation = (currentElement, nextElement) => {
+        currentElement.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                nextElement.focus();
+            }
+        });
+    };
+
+    handleEnterNavigation(studentName, rollNumber);
+    handleEnterNavigation(rollNumber, className);
+    
+    className.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            semester.focus();
+        }
+    });
+
+    // The logic to move to the next screen is handled by onchange="updateAllDropdowns()" in the semester select tag.
+});
+// --- END: Page Interaction Logic ---
 
 </script>
 </body>
