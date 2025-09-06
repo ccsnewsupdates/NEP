@@ -38,12 +38,14 @@ function updateAllDropdowns() {
     document.getElementById("skillSection").style.display = (sem === "5" || sem === "6") ? "none" : "block";
     document.getElementById("projectSection").style.display = (sem === "6") ? "block" : "none";
 
-    populateDropdownGroup('#majorTheorySubjects', 'Major (Theory)');
-    populateDropdownGroup('#majorPracticalSubjects', 'Major (Practical)');
-    populateDropdownGroup('.minorCode', 'Minor', true);
-    populateDropdownGroup('.skillCode', 'Skill Development', true);
-    populateDropdownGroup('#projectSubjects', 'Project');
-    populateDropdownGroup('.coCurricular', 'Co-Curricular', true);
+    // Naya badlav: Nayi function ka istemal
+    repopulateSubjectGroup('majorTheorySubjects', 'Major (Theory)');
+    repopulateSubjectGroup('majorPracticalSubjects', 'Major (Practical)');
+    repopulateSubjectGroup('.minorCode', 'Minor', true);
+    repopulateSubjectGroup('.skillCode', 'Skill Development', true);
+    repopulateSubjectGroup('projectSubjects', 'Project');
+    repopulateSubjectGroup('.coCurricular', 'Co-Curricular', true);
+
 
     const firstInput = document.querySelector('#majorTheorySubjects .majorTheoryExternal');
     if (firstInput) {
@@ -84,17 +86,44 @@ function populateDropdown(selectElement, subjectType) {
     });
 }
 
-function populateDropdownGroup(containerSelector, subjectType, isSingle = false) {
+// NAYI FUNCTION: Yeh dropdowns ko manage karegi
+function repopulateSubjectGroup(containerId, subjectType, isSingle = false) {
+    // Agar sirf ek hi dropdown hai (jaise Minor), to purana logic istemal karein
     if (isSingle) {
-        const selectElement = document.querySelector(containerSelector);
+        const selectElement = document.querySelector(containerId);
         if (selectElement) populateDropdown(selectElement, subjectType);
-    } else {
-        const container = document.getElementById(containerSelector.substring(1));
-        if (container) {
-            const dropdowns = container.querySelectorAll('.subjectCode');
-            dropdowns.forEach(dd => populateDropdown(dd, subjectType));
-        }
+        return;
     }
+
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    // Multiple dropdowns (Major Theory/Practical) ke liye naya logic
+    const allDropdowns = container.querySelectorAll('.subjectCode');
+    const selectedCodes = [];
+    allDropdowns.forEach(dd => {
+        if (dd.value) {
+            selectedCodes.push(dd.value);
+        }
+    });
+
+    const allPossibleSubjects = getFilteredSubjects(subjectType);
+
+    allDropdowns.forEach(dropdown => {
+        const currentValue = dropdown.value;
+        dropdown.innerHTML = '<option value="">-- Select Subject --</option>';
+
+        allPossibleSubjects.forEach(subject => {
+            // Subject ko tabhi add karo jab woh kahin aur select na ho, ya woh isi dropdown ka current value ho
+            if (!selectedCodes.includes(subject.code) || subject.code === currentValue) {
+                const option = document.createElement('option');
+                option.value = subject.code;
+                option.textContent = `${subject.subject} (${subject.code})`;
+                dropdown.appendChild(option);
+            }
+        });
+        dropdown.value = currentValue;
+    });
 }
 
 
@@ -115,6 +144,8 @@ function addSubject(containerId, name, subjectType, fields) {
     container.appendChild(div);
 
     const newSelect = div.querySelector('.subjectCode');
+    // Naya badlav: Jaise hi subject select ho, sabhi dropdowns update ho jayein
+    newSelect.onchange = () => repopulateSubjectGroup(containerId, subjectType); 
     populateDropdown(newSelect, subjectType);
 }
 
@@ -424,8 +455,8 @@ function openResultInNewTab(studentDetailsHTML, tbodyHTML, overallHTML, overallC
         .flash-animation { animation: flash 1.5s infinite; text-align: center; }
     `;
 
-    const newPageHTML = `
-        <style>${css}</style>
+    const newPageHTML = \`
+        <style>\${css}</style>
         <div id="gradeCard">
             <div class="header-logo">
                 <div class="university-info">
@@ -433,8 +464,8 @@ function openResultInNewTab(studentDetailsHTML, tbodyHTML, overallHTML, overallC
                     <h4>Unofficial Grade Card (NEP)</h4>
                 </div>
             </div>
-            <div id="congratsMsg">${congratsHTML}</div>
-            <div id="studentDetails">${studentDetailsHTML}</div>
+            <div id="congratsMsg">\${congratsHTML}</div>
+            <div id="studentDetails">\${studentDetailsHTML}</div>
             <table id="resultTable">
                 <thead>
                 <tr>
@@ -450,14 +481,14 @@ function openResultInNewTab(studentDetailsHTML, tbodyHTML, overallHTML, overallC
                     <th>Remarks</th>
                 </tr>
                 </thead>
-                <tbody>${tbodyHTML}</tbody>
+                <tbody>\${tbodyHTML}</tbody>
             </table>
-            <div id="overall" class="${overallClassName}">${overallHTML}</div>
+            <div id="overall" class="\${overallClassName}">\${overallHTML}</div>
             <div id="note">
                 <strong>अस्वीकरण:</strong> यह एक अनौपचारिक ग्रेड कार्ड है और केवल सूचना के उद्देश्यों के लिए है। यह चौधरी चरण सिंह विश्वविद्यालय, मेरठ द्वारा जारी आधिकारिक दस्तावेज़ नहीं है। किसी भी विसंगति के लिए, कृपया विश्वविद्यालय के आधिकारिक रिकॉर्ड को देखें।
             </div>
         </div>
-    `;
+    \`;
 
     const popup = document.getElementById('resultPopup');
     const container = document.getElementById('gradeCardContainer');
