@@ -309,7 +309,6 @@ footer {
   height: 100%;
   overflow: auto;
   background-color: rgba(0,0,0,0.6);
-  /* 'display: flex;' yahan se hata diya gaya hai */
   justify-content: center;
   align-items: center;
 }
@@ -346,4 +345,5 @@ footer {
 .close-button:hover {
   transform: scale(1.05);
 }
+
 
