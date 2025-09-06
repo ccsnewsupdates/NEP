@@ -5,7 +5,378 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEP Result Calculator (with Grace)</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-<link rel="stylesheet" href="style.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+:root {
+  --primary-color: #4a90e2;
+  --secondary-color: #50e3c2;
+  --header-color: #ffc107;
+  --bg-color: #f0f4f8;
+  --card-bg: rgba(255, 255, 255, 0.85); /* Frosted glass effect */
+  --shadow-color: rgba(0, 0, 0, 0.15);
+  --pass-color: #28a745;
+  --fail-color: #dc3545;
+  --grace-color: #fd7e14;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--bg-color);
+  padding: 15px;
+  margin: 0;
+  color: #333;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.main-header {
+    text-align: center;
+    margin-bottom: 15px;
+}
+.main-header h1 {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #E63817;
+    text-shadow: none;
+    margin: 0;
+}
+.main-header h2 {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #555;
+    margin-top: 5px;
+    text-shadow: none;
+}
+
+h2.section-title {
+  font-size: 0.9em;
+  margin-top: 10px;
+  margin-bottom: 12px;
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--secondary-color);
+  padding-bottom: 5px;
+  font-weight: 700;
+}
+
+.description {
+  text-align: center;
+  margin-bottom: 12px; /* Reduced */
+  background: rgba(255, 255, 255, 0.7);
+  padding: 10px 15px;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.description p {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+.description .sub-heading {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #d9534f;
+}
+.description .disclaimer-title {
+    font-weight: 600;
+    margin-top: 10px;
+    color: #500;
+}
+.description .disclaimer-text {
+    font-size: 0.5em;
+    text-align: left;
+    color: #333;
+}
+
+/* Tab Styles */
+.tab-container {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 5px 15px var(--shadow-color);
+    margin-bottom: 12px; /* Reduced */
+    overflow: hidden;
+    backdrop-filter: blur(5px);
+   -webkit-backdrop-filter: blur(5px);
+}
+.tab-buttons {
+    overflow: hidden;
+    background-color: rgba(241, 241, 241, 0.5);
+    display: flex;
+}
+.tab-buttons button {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 12px 14px;
+    transition: all 0.3s ease;
+    font-size: 0.7em;
+    font-weight: 600;
+    color: var(--primary-color);
+    flex: 1;
+    border-radius: 0;
+    box-shadow: none;
+}
+.tab-buttons button:hover {
+    background-color: rgba(221, 221, 221, 0.7);
+    transform: none;
+    box-shadow: none;
+}
+.tab-buttons button.active {
+    background: linear-gradient(45deg, #F43208, #f86a43);
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+.tab-content {
+    display: none;
+    padding: 12px;
+    text-align: center;
+    font-size: 0.85em;
+    border-top: none;
+}
+.tab-content .channel-description {
+    color: #333;
+    font-weight: 600;
+}
+.tab-content b { color: var(--primary-color); }
+.tab-content small { font-size: 0.8em; display: block; }
+
+.rules {
+  background: var(--card-bg);
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-left: 5px solid var(--primary-color);
+}
+.rules ul { margin: 0; padding-left: 20px; line-height: 1.6; }
+
+/* 3D Card Style */
+.subject-section {
+  margin-bottom: 20px;
+  border-radius: 15px;
+  padding: 20px;
+  background: var(--card-bg);
+  box-shadow: 0 8px 24px var(--shadow-color);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+.subject-section:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+}
+
+.subject {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.subject label {
+  min-width: 120px;
+  font-weight: 600;
+  font-size: 0.9em;
+  color: #333;
+}
+.subject .subjectCode {
+    flex-grow: 1;
+}
+
+.subject input[type=number],
+.subject input[type=text],
+select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.subject input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 8px rgba(74, 144, 226, 0.6);
+}
+.subject input[type=number] { width: 60px; text-align: center; }
+
+button, .social-button {
+  padding: 12px 25px;
+  margin: 5px;
+  cursor: pointer;
+  background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 1em;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  text-decoration: none;
+  display: inline-block;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+.social-buttons-container {
+    display: flex;
+    justify-content: center;
+    align-items: stretch; /* Makes buttons equal height */
+    gap: 10px; /* Creates space between buttons */
+}
+.social-button {
+    flex: 1; /* Each button will take equal space */
+    max-width: 250px; /* Optional: prevent buttons from being too wide */
+    padding: 10px 5px;
+    font-size: 0.8em;
+    text-align: center;
+    white-space: normal; /* Allows text to wrap */
+    line-height: 1.2;
+}
+button:hover, .social-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+button:active, .social-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
+/* Style for the new tutorial button */
+.tutorial-button {
+    background: linear-gradient(45deg, #e52d27 0%, #b31217 100%);
+}
+
+.check-result-btn {
+    padding: 12px 25px;
+    font-size: 1.1em;
+    background: linear-gradient(45deg, #ff4e50, #f9d423);
+    margin-top: 15px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 8px 25px rgba(255, 78, 80, 0.6);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+}
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding: 10px;
+    font-weight: 600;
+    color: #333;
+    text-shadow: none;
+    font-size: 0.8em; /* Add this line to make the text smaller */
+}
+
+/* Error message blink */
+.error-blink{
+    font-weight: bold;
+    color: red;
+    animation: blink 0.7s step-start infinite;
+}
+@keyframes blink{
+    50% { opacity:0; }
+}
+
+
+/* --- MODAL STYLES --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    z-index: 1000;
+    display: none; /* Initially hidden */
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.modal-content {
+    position: relative;
+    background: white;
+    width: 100%;
+    max-width: 1000px;
+    max-height: 90vh;
+    overflow-y: auto;
+    /* Styles are inherited from grade card CSS injected by JS */
+}
+
+/* Grade Card styles (for inside modal) */
+#gradeCard {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+}
+.header-logo { display: flex; justify-content: center; align-items: center; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; margin-bottom: 15px; }
+.header-logo img { max-width: 50px; margin-right: 50px; }
+.header-logo .university-info { text-align: center; }
+.header-logo h3 { margin: 0; color: #3498db; font-size: 1.5em; font-weight: 700; }
+.header-logo h4 { margin: 5px 0 0; font-weight: 600; color: #555; font-size: 1.1em; }
+#studentDetails { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 20px; font-size: 0.95em; padding: 15px; background: #f9fafb; border-radius: 12px; border: 1px solid #e1e8ed; }
+#studentDetails div { flex: 1 1 220px; margin: 5px; }
+#studentDetails b { color: #34495e; }
+#resultTable { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.8em; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-radius: 12px; overflow: hidden; }
+thead { background: linear-gradient(90deg, #3498db, #2980b9); color: white; text-transform: uppercase; letter-spacing: 0.5px; }
+#resultTable th, #resultTable td { border: 1px solid #e1e8ed; padding: 10px 8px; text-align: center; }
+#resultTable tbody tr:nth-child(even) { background-color: #f9fafb; }
+#resultTable tbody tr:hover { background-color: #f1f8ff; }
+.pass { color: #27ae60; font-weight: bold; }
+.fail { color: #e74c3c; font-weight: bold; }
+.grace { font-weight: bold; }
+.graceApplied { background-color: #fef9e7 !important; }
+#overall { font-size: 1.3em; text-align: center; margin-top: 25px; padding: 15px; border-radius: 12px; font-weight: 700; line-height: 1.5; }
+.overall-pass { background-color: #eafaf1; border: 1px solid #27ae60; color: #333; }
+.overall-fail { background-color: #fdedec; border: 1px solid #e74c3c; color: #333; }
+#note { margin-top: 25px; font-size: 0.8em; text-align: justify; color: #7f8c8d; background-color: #fcfcfc; padding: 15px; border-radius: 8px; border-left: 5px solid #bdc3c7; }
+#gradeCard button { padding: 10px 22px; margin: 10px 5px; background: linear-gradient(45deg, #3498db, #2980b9); font-size: 0.9em; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+#gradeCard button:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
+@keyframes flash { 0%, 100% { transform: scale(1); color: #2980b9; } 50% { transform: scale(1.05); color: #3498db; } }
+.flash-animation { animation: flash 1.5s infinite; text-align: center; }
+.modal-close-btn { position: absolute; top: 5px; right: 15px; font-size: 2.5em; font-weight: bold; cursor: pointer; color: #555; z-index: 1010; }
+.modal-bottom-close { text-align: center; margin-top: 15px; }
+.modal-bottom-close button { background: #c0392b; }
+
+@media print {
+  body.modal-open > *:not(.modal-overlay) { display: none; }
+  body.modal-open .modal-overlay,
+  body.modal-open .modal-content {
+    display: block; position: static; width: auto; height: auto;
+    overflow: visible; box-shadow: none; border: none; padding: 0;
+    justify-content: initial; align-items: initial;
+  }
+  body.modal-open #gradeCard { box-shadow: none; border: none; margin: 0; max-width: 100%; border-radius: 0; }
+  body.modal-open .action-buttons,
+  body.modal-open .modal-close-btn,
+  body.modal-open .modal-bottom-close,
+  body.modal-open #note { display: none; }
+}
+
+</style>
 </head>
 <body>
 
@@ -44,7 +415,7 @@
     </div>
 
     <div class="social-buttons-container">
-        <a href="https://linkbio.co/ccsupdates" target="_blank" class="social-button social-media-btn">Other Social Media Links</a>
+        <a href="https://linkbio.co/ccsupdates" target="_blank" class="social-button">Other Social Media Links</a>
         <a href="https://youtu.be/YxxzgcotoU0" target="_blank" class="social-button tutorial-button">Tutorial Video Watch Here</a>
     </div>
 
@@ -105,19 +476,19 @@
 
 <div id="marksSection" style="display:none;">
   <div id="semTitle" style="text-align:center; font-weight:bold; font-size:1.2em; margin-bottom:10px; color: #34495e; text-shadow: none;"></div>
-  
+
   <div class="subject-section">
       <h2 class="section-title">Major Theory Subjects</h2>
       <div id="majorTheorySubjects"></div>
       <button onclick="addMajorTheory()">Add Major Theory</button>
   </div>
-  
+
   <div class="subject-section">
       <h2 class="section-title">Major Practical Subjects</h2>
       <div id="majorPracticalSubjects"></div>
       <button onclick="addMajorPractical()">Add Major Practical</button>
   </div>
-  
+
   <div class="subject-section" id="minorSection">
       <h2 class="section-title">Minor Subject</h2>
       <div class="subject">
@@ -127,7 +498,7 @@
           INT <input type="number" min="0" max="25" class="minorInternal">
       </div>
   </div>
-  
+
   <div class="subject-section" id="skillSection">
       <h2 class="section-title">Skill Development</h2>
       <div class="subject">
@@ -137,7 +508,7 @@
           PR <input type="number" min="0" max="60" class="skillPractical">
       </div>
   </div>
-  
+
   <div class="subject-section" id="coCurricularSection">
       <h2 class="section-title">Co-Curricular</h2>
       <div class="subject">
@@ -147,13 +518,13 @@
         INT <input type="number" min="0" max="25" class="coInternal">
       </div>
   </div>
-  
+
   <div class="subject-section" id="projectSection" style="display:none;">
       <h2 class="section-title">Project</h2>
       <div id="projectSubjects"></div>
       <button onclick="addProject()">Add Project</button>
   </div>
-  
+
   <div style="text-align:center; margin-top:20px;">
       <button onclick="calculateResult()">Calculate Result</button>
       <button onclick="resetForm()">Reset</button>
@@ -168,19 +539,1214 @@
 
 </div>
 
-<audio id="successSound" src="https://www.soundjay.com/buttons/sounds/button-7.mp3" preload="auto"></audio>
-
-<div id="resultPopup" class="popup-overlay">
-  <div class="popup-content">
-    <div id="gradeCardContainer">
+<div id="resultModal" class="modal-overlay">
+  <div class="modal-content">
+    <span class="modal-close-btn">&times;</span>
+    <div id="modalBody">
       </div>
-    <button id="closePopupBtn" class="close-button">&times; Close</button>
   </div>
 </div>
 
 
-<script src="data.js"></script>
-<script src="script.js"></script>
+<audio id="successSound" src="https://www.soundjay.com/buttons/sounds/button-7.mp3" preload="auto"></audio>
 
+
+<script>
+// --- START: Integrated Course Data from CSV ---
+// The long 'courseData' array is omitted here for brevity, but it is included in the actual code.
+const courseData = [
+    { class: "BA", subjectType: "Major (Theory)", subject: "Hindi", semester: "1", code: "A010101T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Hindi", semester: "2", code: "A010201T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Hindi", semester: "3", code: "A010301T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Hindi", semester: "4", code: "A010401T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Hindi", semester: "5", code: "A010501T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Hindi", semester: "5", code: "A010502T" },
+    { class: "BA", subjectType: "Project", subject: "Hindi", semester: "5", code: "A010503R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Hindi", semester: "6", code: "A010601T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Hindi", semester: "6", code: "A010602T" },
+    { class: "BA", subjectType: "Project", subject: "Hindi", semester: "6", code: "A010603R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sanskrit", semester: "1", code: "A020101T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sanskrit", semester: "2", code: "A020201T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sanskrit", semester: "3", code: "A020301T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sanskrit", semester: "4", code: "A020401T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sanskrit", semester: "5", code: "A020501T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sanskrit", semester: "5", code: "A020502T" },
+    { class: "BA", subjectType: "Project", subject: "Sanskrit", semester: "5", code: "A020503R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sanskrit", semester: "6", code: "A020601T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sanskrit", semester: "6", code: "A020602T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sanskrit", semester: "6", code: "A020603T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sanskrit", semester: "6", code: "A020604T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sanskrit", semester: "6", code: "A020605T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sanskrit", semester: "6", code: "A020606T" },
+    { class: "BA", subjectType: "Project", subject: "Sanskrit", semester: "6", code: "A020607R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Urdu", semester: "1", code: "A030101T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Urdu", semester: "2", code: "A030201T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Urdu", semester: "3", code: "A030301T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Urdu", semester: "4", code: "A030401T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Urdu", semester: "5", code: "A030501T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Urdu", semester: "5", code: "A030502T" },
+    { class: "BA", subjectType: "Project", subject: "Urdu", semester: "5", code: "A030503R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Urdu", semester: "6", code: "A030601T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Urdu", semester: "6", code: "A030602T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Urdu", semester: "6", code: "A030603T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Urdu", semester: "6", code: "A030604T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Urdu", semester: "6", code: "A030605T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Urdu", semester: "6", code: "A030606T" },
+    { class: "BA", subjectType: "Project", subject: "Urdu", semester: "6", code: "A030607R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "English", semester: "1", code: "A040101T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "English", semester: "2", code: "A040201T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "English", semester: "3", code: "A040301T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "English", semester: "4", code: "A040401T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "English", semester: "5", code: "A040501T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "English", semester: "5", code: "A040502T" },
+    { class: "BA", subjectType: "Project", subject: "English", semester: "5", code: "A040503R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "English", semester: "6", code: "A040601T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "English", semester: "6", code: "A040602T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "English", semester: "6", code: "A040603T" },
+    { class: "BA", subjectType: "Project", subject: "English", semester: "6", code: "A040604R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "History", semester: "1", code: "A050101T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "History", semester: "2", code: "A050201T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "History", semester: "3", code: "A050301T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "History", semester: "4", code: "A050401T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "History", semester: "5", code: "A050501T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "History", semester: "5", code: "A050502T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "History", semester: "5", code: "A050503T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "History", semester: "5", code: "A050504T" },
+    { class: "BA", subjectType: "Project", subject: "History", semester: "5", code: "A050505R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "History", semester: "6", code: "A050601T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "History", semester: "6", code: "A050602T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "History", semester: "6", code: "A050603T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "History", semester: "6", code: "A050604T" },
+    { class: "BA", subjectType: "Project", subject: "History", semester: "6", code: "A050605R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Political Science", semester: "1", code: "A060101T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Political Science", semester: "1", code: "A060102P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Political Science", semester: "2", code: "A060201T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Political Science", semester: "3", code: "A060301T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Political Science", semester: "3", code: "A060302P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Political Science", semester: "4", code: "A060401T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Political Science", semester: "5", code: "A060501T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Political Science", semester: "5", code: "A060502T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Political Science", semester: "5", code: "A060503P" },
+    { class: "BA", subjectType: "Project", subject: "Political Science", semester: "5", code: "A060504R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Political Science", semester: "6", code: "A060601T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Political Science", semester: "6", code: "A060602T" },
+    { class: "BA", subjectType: "Project", subject: "Political Science", semester: "6", code: "A060603R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sociology", semester: "1", code: "A070104T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sociology", semester: "2", code: "A070204T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sociology", semester: "3", code: "A070304T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sociology", semester: "4", code: "A070404T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sociology", semester: "5", code: "A070504T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sociology", semester: "5", code: "A070505T" },
+    { class: "BA", subjectType: "Project", subject: "Sociology", semester: "5", code: "A070506R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sociology", semester: "6", code: "A070604T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Sociology", semester: "6", code: "A070605T" },
+    { class: "BA", subjectType: "Project", subject: "Sociology", semester: "6", code: "A070606R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Economics", semester: "1", code: "A080101T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Economics", semester: "2", code: "A080201T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Economics", semester: "3", code: "A080301T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Economics", semester: "4", code: "A080401T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Economics", semester: "5", code: "A080501T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Economics", semester: "5", code: "A080502T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Economics", semester: "5", code: "A080503T" },
+    { class: "BA", subjectType: "Project", subject: "Economics", semester: "5", code: "A080504R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Economics", semester: "6", code: "A080601T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Economics", semester: "6", code: "A080602T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Economics", semester: "6", code: "A080603T" },
+    { class: "BA", subjectType: "Project", subject: "Economics", semester: "6", code: "A080604R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Psychology", semester: "1", code: "A090101T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Psychology", semester: "1", code: "A090102P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Psychology", semester: "2", code: "A090201T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Psychology", semester: "2", code: "A090202P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Psychology", semester: "3", code: "A090301T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Psychology", semester: "3", code: "A090302P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Psychology", semester: "4", code: "A090401T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Psychology", semester: "4", code: "A090402P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Psychology", semester: "5", code: "A090501T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Psychology", semester: "5", code: "A090502T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Psychology", semester: "5", code: "A090503P" },
+    { class: "BA", subjectType: "Project", subject: "Psychology", semester: "5", code: "A090504R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Psychology", semester: "6", code: "A090601T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Psychology", semester: "6", code: "A090602T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Psychology", semester: "6", code: "A090603P" },
+    { class: "BA", subjectType: "Project", subject: "Psychology", semester: "6", code: "A090604R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Philosophy", semester: "1", code: "A100101T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Philosophy", semester: "2", code: "A100201T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Philosophy", semester: "2", code: "A100202P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Philosophy", semester: "3", code: "A100301T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Philosophy", semester: "4", code: "A100401T/A100402T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Philosophy", semester: "4", code: "A100403P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Philosophy", semester: "5", code: "A100501T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Philosophy", semester: "5", code: "A100502T" },
+    { class: "BA", subjectType: "Project", subject: "Philosophy", semester: "5", code: "A100503R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Philosophy", semester: "6", code: "A100601T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Philosophy", semester: "6", code: "A100602T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Philosophy", semester: "6", code: "A100603P" },
+    { class: "BA", subjectType: "Project", subject: "Philosophy", semester: "6", code: "A100604R" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Geography", semester: "1", code: "A110101T" },
+    { class: "BA, BSc.", subjectType: "Major (Practical)", subject: "Geography", semester: "1", code: "A110102P" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Geography", semester: "2", code: "A110201T" },
+    { class: "BA, BSc.", subjectType: "Major (Practical)", subject: "Geography", semester: "2", code: "A110202P" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Geography", semester: "3", code: "A110301T" },
+    { class: "BA, BSc.", subjectType: "Major (Practical)", subject: "Geography", semester: "3", code: "A110302P" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Geography", semester: "4", code: "A110401T" },
+    { class: "BA, BSc.", subjectType: "Major (Practical)", subject: "Geography", semester: "4", code: "A110402P" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Geography", semester: "5", code: "A110501T" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Geography", semester: "5", code: "A110502T" },
+    { class: "BA, BSc.", subjectType: "Major (Practical)", subject: "Geography", semester: "5", code: "A110503P" },
+    { class: "BA, BSc.", subjectType: "Project", subject: "Geography", semester: "5", code: "A110504R" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Geography", semester: "6", code: "A110601T" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Geography", semester: "6", code: "A110602T" },
+    { class: "BA, BSc.", subjectType: "Major (Practical)", subject: "Geography", semester: "6", code: "A110603P" },
+    { class: "BA, BSc.", subjectType: "Project", subject: "Geography", semester: "6", code: "A110604R" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Defence Studies", semester: "1", code: "A120101T" },
+    { class: "BA, BSc.", subjectType: "Major (Practical)", subject: "Defence Studies", semester: "1", code: "A120102P" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Defence Studies", semester: "2", code: "A120201T" },
+    { class: "BA, BSc.", subjectType: "Major (Practical)", subject: "Defence Studies", semester: "2", code: "A120202P" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Defence Studies", semester: "3", code: "A120301T" },
+    { class: "BA, BSc.", subjectType: "Major (Practical)", subject: "Defence Studies", semester: "3", code: "A120302P" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Defence Studies", semester: "4", code: "A120401T" },
+    { class: "BA, BSc.", subjectType: "Major (Practical)", subject: "Defence Studies", semester: "4", code: "A120402P" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Defence Studies", semester: "5", code: "A120501T" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Defence Studies", semester: "5", code: "A120502T" },
+    { class: "BA, BSc.", subjectType: "Major (Practical)", subject: "Defence Studies", semester: "5", code: "A120503P" },
+    { class: "BA, BSc.", subjectType: "Project", subject: "Defence Studies", semester: "5", code: "A120504R" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Defence Studies", semester: "6", code: "A120601T" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Defence Studies", semester: "6", code: "A120602T" },
+    { class: "BA, BSc.", subjectType: "Major (Practical)", subject: "Defence Studies", semester: "6", code: "A120603P" },
+    { class: "BA, BSc.", subjectType: "Project", subject: "Defence Studies", semester: "6", code: "A120604R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Home Science", semester: "1", code: "A130101T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Home Science", semester: "1", code: "A130102P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Home Science", semester: "2", code: "A130201T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Home Science", semester: "2", code: "A130202P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Home Science", semester: "3", code: "A130301T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Home Science", semester: "3", code: "A130302P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Home Science", semester: "4", code: "A130401T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Home Science", semester: "4", code: "A130402P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Home Science", semester: "5", code: "A130501T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Home Science", semester: "5", code: "A130502T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Home Science", semester: "5", code: "A130503P" },
+    { class: "BA", subjectType: "Project", subject: "Home Science", semester: "5", code: "A130504R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Home Science", semester: "6", code: "A130601T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Home Science", semester: "6", code: "A130602T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Home Science", semester: "6", code: "A130603P" },
+    { class: "BA", subjectType: "Project", subject: "Home Science", semester: "6", code: "A130604R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Library & Information Science", semester: "1", code: "A180101T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Library & Information Science", semester: "2", code: "A180201T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Library & Information Science", semester: "3", code: "A180301T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Library & Information Science", semester: "4", code: "A180401T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Library & Information Science", semester: "5", code: "A180501T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Library & Information Science", semester: "5", code: "A180502P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Library & Information Science", semester: "5", code: "A180503T" },
+    { class: "BA", subjectType: "Project", subject: "Library & Information Science", semester: "5", code: "A180504R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Library & Information Science", semester: "6", code: "A180601T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Library & Information Science", semester: "6", code: "A180602T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Library & Information Science", semester: "6", code: "A180603P" },
+    { class: "BA", subjectType: "Project", subject: "Library & Information Science", semester: "6", code: "A180604R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Drawing & Painting", semester: "1", code: "A210101T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Drawing & Painting", semester: "1", code: "A210102P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Drawing & Painting", semester: "2", code: "A210201T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Drawing & Painting", semester: "2", code: "A210202P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Drawing & Painting", semester: "3", code: "A210301T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Drawing & Painting", semester: "3", code: "A210302P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Drawing & Painting", semester: "4", code: "A210401T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Drawing & Painting", semester: "4", code: "A210402P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Drawing & Painting", semester: "5", code: "A210501T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Drawing & Painting", semester: "5", code: "A210502T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Drawing & Painting", semester: "5", code: "A210503P" },
+    { class: "BA", subjectType: "Project", subject: "Drawing & Painting", semester: "5", code: "A210504R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Drawing & Painting", semester: "6", code: "A210601T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Drawing & Painting", semester: "6", code: "A210602T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Drawing & Painting", semester: "6", code: "A210603P" },
+    { class: "BA", subjectType: "Project", subject: "Drawing & Painting", semester: "6", code: "A210604R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Music (Instrumental Sitar)", semester: "1", code: "A300101T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Instrumental Sitar)", semester: "1", code: "A300102P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Music (Instrumental Sitar)", semester: "2", code: "A300201T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Instrumental Sitar)", semester: "2", code: "A300202P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Music (Instrumental Sitar)", semester: "3", code: "A300301T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Instrumental Sitar)", semester: "3", code: "A300302P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Music (Instrumental Sitar)", semester: "4", code: "A300401T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Instrumental Sitar)", semester: "4", code: "A300402P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Music (Instrumental Sitar)", semester: "5", code: "A300501T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Instrumental Sitar)", semester: "5", code: "A300502P" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Instrumental Sitar)", semester: "5", code: "A300503P" },
+    { class: "BA", subjectType: "Project", subject: "Music (Instrumental Sitar)", semester: "5", code: "A300504R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Music (Instrumental Sitar)", semester: "6", code: "A300601T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Instrumental Sitar)", semester: "6", code: "A300602P" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Instrumental Sitar)", semester: "6", code: "A300603P" },
+    { class: "BA", subjectType: "Project", subject: "Music (Instrumental Sitar)", semester: "6", code: "A300604R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Music (Tabla)", semester: "1", code: "A310101T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Tabla)", semester: "1", code: "A310102P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Music (Tabla)", semester: "2", code: "A310201T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Tabla)", semester: "2", code: "A310202P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Music (Tabla)", semester: "3", code: "A310301T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Tabla)", semester: "3", code: "A310302P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Music (Tabla)", semester: "4", code: "A310401T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Tabla)", semester: "4", code: "A310402P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Music (Tabla)", semester: "5", code: "A310501T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Tabla)", semester: "5", code: "A310502P" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Tabla)", semester: "5", code: "A310503P" },
+    { class: "BA", subjectType: "Project", subject: "Music (Tabla)", semester: "5", code: "A310504R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Music (Tabla)", semester: "6", code: "A310601T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Tabla)", semester: "6", code: "A310602P" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Tabla)", semester: "6", code: "A310603P" },
+    { class: "BA", subjectType: "Project", subject: "Music (Tabla)", semester: "6", code: "A310604R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Music (Vocal)", semester: "1", code: "A320101T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Vocal)", semester: "1", code: "A320102P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Music (Vocal)", semester: "2", code: "A320201T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Vocal)", semester: "2", code: "A320202P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Music (Vocal)", semester: "3", code: "A320301T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Vocal)", semester: "3", code: "A320302P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Music (Vocal)", semester: "4", code: "A320401T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Vocal)", semester: "4", code: "A320402P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Music (Vocal)", semester: "5", code: "A320501T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Vocal)", semester: "5", code: "A320502P" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Vocal)", semester: "5", code: "A320503P" },
+    { class: "BA", subjectType: "Project", subject: "Music (Vocal)", semester: "5", code: "A320504R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Music (Vocal)", semester: "6", code: "A320601T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Vocal)", semester: "6", code: "A320602P" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Music (Vocal)", semester: "6", code: "A320603P" },
+    { class: "BA", subjectType: "Project", subject: "Music (Vocal)", semester: "6", code: "A320604R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Education", semester: "1", code: "E010101T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Education", semester: "1", code: "E010102P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Education", semester: "2", code: "E010201T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Education", semester: "2", code: "E010202P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Education", semester: "3", code: "E010301T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Education", semester: "3", code: "E010302P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Education", semester: "4", code: "E010401T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Education", semester: "4", code: "E010402P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Education", semester: "5", code: "E010501T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Education", semester: "5", code: "E010502T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Education", semester: "5", code: "E010503P" },
+    { class: "BA", subjectType: "Project", subject: "Education", semester: "5", code: "E010501R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Education", semester: "6", code: "E010601T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Education", semester: "6", code: "E010602T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Education", semester: "6", code: "E010603P" },
+    { class: "BA", subjectType: "Project", subject: "Education", semester: "6", code: "E010604R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Physical Education", semester: "1", code: "E020101T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Physical Education", semester: "1", code: "E020102P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Physical Education", semester: "2", code: "E020201T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Physical Education", semester: "2", code: "E020202P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Physical Education", semester: "3", code: "E020301T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Physical Education", semester: "3", code: "E020302P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Physical Education", semester: "4", code: "E020401T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Physical Education", semester: "4", code: "E020402P" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Physical Education", semester: "5", code: "E020501T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Physical Education", semester: "5", code: "E020502T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Physical Education", semester: "5", code: "E020503P" },
+    { class: "BA", subjectType: "Project", subject: "Physical Education", semester: "5", code: "E020504R" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Physical Education", semester: "6", code: "E020601T" },
+    { class: "BA", subjectType: "Major (Theory)", subject: "Physical Education", semester: "6", code: "E020602T" },
+    { class: "BA", subjectType: "Major (Practical)", subject: "Physical Education", semester: "6", code: "E020603P" },
+    { class: "BA", subjectType: "Project", subject: "Physical Education", semester: "6", code: "E020604R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Physics", semester: "1", code: "B010101T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Physics", semester: "1", code: "B010102P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Physics", semester: "2", code: "B010201T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Physics", semester: "2", code: "B010202P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Physics", semester: "3", code: "B010301T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Physics", semester: "3", code: "B010302P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Physics", semester: "4", code: "B010401T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Physics", semester: "4", code: "B010402P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Physics", semester: "5", code: "B010501T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Physics", semester: "5", code: "B010502T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Physics", semester: "5", code: "B010503P" },
+    { class: "BSc.", subjectType: "Project", subject: "Physics", semester: "5", code: "B010504R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Physics", semester: "6", code: "B010601T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Physics", semester: "6", code: "B010602T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Physics", semester: "6", code: "B010603P" },
+    { class: "BSc.", subjectType: "Project", subject: "Physics", semester: "6", code: "B010604R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Chemistry", semester: "1", code: "B020101T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Chemistry", semester: "1", code: "B020102P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Chemistry", semester: "2", code: "B020201T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Chemistry", semester: "2", code: "B020202P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Chemistry", semester: "3", code: "B020301T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Chemistry", semester: "3", code: "B020302P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Chemistry", semester: "4", code: "B020401T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Chemistry", semester: "4", code: "B020402P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Chemistry", semester: "5", code: "B020501T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Chemistry", semester: "5", code: "B020502T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Chemistry", semester: "5", code: "B020503P" },
+    { class: "BSc.", subjectType: "Project", subject: "Chemistry", semester: "5", code: "B020504R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Chemistry", semester: "6", code: "B020601T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Chemistry", semester: "6", code: "B020602T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Chemistry", semester: "6", code: "B020603P" },
+    { class: "BSc.", subjectType: "Project", subject: "Chemistry", semester: "6", code: "B020604R" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Mathematics", semester: "1", code: "B030101T" },
+    { class: "BA, BSc.", subjectType: "Major (Practical)", subject: "Mathematics", semester: "1", code: "B030102P" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Mathematics", semester: "2", code: "B030201T" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Mathematics", semester: "3", code: "B030301T" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Mathematics", semester: "4", code: "B030401T" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Mathematics", semester: "5", code: "B030501T" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Mathematics", semester: "5", code: "B030502T" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Mathematics", semester: "5", code: "B030503T" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Mathematics", semester: "5", code: "B030504T" },
+    { class: "BA, BSc.", subjectType: "Project", subject: "Mathematics", semester: "5", code: "B030505R" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Mathematics", semester: "6", code: "B030601T" },
+    { class: "BA, BSc.", subjectType: "Major (Theory)", subject: "Mathematics", semester: "6", code: "B030602T" },
+    { class: "BA, BSc.", subjectType: "Major (Practical)", subject: "Mathematics", semester: "6", code: "B030603P" },
+    { class: "BA, BSc.", subjectType: "Project", subject: "Mathematics", semester: "6", code: "B030604R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Botany", semester: "1", code: "B040101T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Botany", semester: "1", code: "B040102P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Botany", semester: "2", code: "B040201T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Botany", semester: "2", code: "B040202P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Botany", semester: "3", code: "B040301T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Botany", semester: "3", code: "B040302P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Botany", semester: "4", code: "B040401T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Botany", semester: "4", code: "B040402P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Botany", semester: "5", code: "B040501T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Botany", semester: "5", code: "B040502T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Botany", semester: "5", code: "B040503P" },
+    { class: "BSc.", subjectType: "Project", subject: "Botany", semester: "5", code: "B040504R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Botany", semester: "6", code: "B040601T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Botany", semester: "6", code: "B040602T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Botany", semester: "6", code: "B040603P" },
+    { class: "BSc.", subjectType: "Project", subject: "Botany", semester: "6", code: "B040604R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Zoology", semester: "1", code: "B050101T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Zoology", semester: "1", code: "B050102P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Zoology", semester: "2", code: "B050201T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Zoology", semester: "2", code: "B050202P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Zoology", semester: "3", code: "B050301T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Zoology", semester: "3", code: "B050302P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Zoology", semester: "4", code: "B050401T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Zoology", semester: "4", code: "B050402P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Zoology", semester: "5", code: "B050501T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Zoology", semester: "5", code: "B050502T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Zoology", semester: "5", code: "B050503P" },
+    { class: "BSc.", subjectType: "Project", subject: "Zoology", semester: "5", code: "B050504R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Zoology", semester: "6", code: "B050601T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Zoology", semester: "6", code: "B050602T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Zoology", semester: "6", code: "B050603P" },
+    { class: "BSc.", subjectType: "Project", subject: "Zoology", semester: "6", code: "B050604R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Statistics", semester: "1", code: "B060101T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Statistics", semester: "1", code: "B060102P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Statistics", semester: "2", code: "B060201T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Statistics", semester: "2", code: "B060202P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Statistics", semester: "3", code: "B060301T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Statistics", semester: "3", code: "B060302P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Statistics", semester: "4", code: "B060401T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Statistics", semester: "4", code: "B060402P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Statistics", semester: "5", code: "B060501T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Statistics", semester: "5", code: "B060502T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Statistics", semester: "5", code: "B060503P" },
+    { class: "BSc.", subjectType: "Project", subject: "Statistics", semester: "5", code: "B060504R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Statistics", semester: "6", code: "B060601T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Statistics", semester: "6", code: "B060602T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Statistics", semester: "6", code: "B060603P" },
+    { class: "BSc.", subjectType: "Project", subject: "Statistics", semester: "6", code: "B060604R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Computer Science", semester: "1", code: "B070101T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Computer Science", semester: "1", code: "B070102P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Computer Science", semester: "2", code: "B070201T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Computer Science", semester: "2", code: "B070202P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Computer Science", semester: "3", code: "B070301T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Computer Science", semester: "3", code: "B070302P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Computer Science", semester: "4", code: "B070401T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Computer Science", semester: "4", code: "B070402P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Computer Science", semester: "5", code: "B070501T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Computer Science", semester: "5", code: "B070502T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Computer Science", semester: "5", code: "B070503P" },
+    { class: "BSc.", subjectType: "Project", subject: "Computer Science", semester: "5", code: "B070504R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Computer Science", semester: "6", code: "B070601T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Computer Science", semester: "6", code: "B070602T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Computer Science", semester: "6", code: "B070603P" },
+    { class: "BSc.", subjectType: "Project", subject: "Computer Science", semester: "6", code: "B070604R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Microbiology", semester: "1", code: "B080101T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Microbiology", semester: "1", code: "B080102P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Microbiology", semester: "2", code: "B080201T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Microbiology", semester: "2", code: "B080202P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Microbiology", semester: "3", code: "B080301T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Microbiology", semester: "3", code: "B080302P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Microbiology", semester: "4", code: "B080401T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Microbiology", semester: "4", code: "B080402P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Microbiology", semester: "5", code: "B080501T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Microbiology", semester: "5", code: "B080502T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Microbiology", semester: "5", code: "B080503P" },
+    { class: "BSc.", subjectType: "Project", subject: "Microbiology", semester: "5", code: "B080504R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Microbiology", semester: "6", code: "B080601T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Microbiology", semester: "6", code: "B080602T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Microbiology", semester: "6", code: "B080603P" },
+    { class: "BSc.", subjectType: "Project", subject: "Microbiology", semester: "6", code: "B080604R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Microbiology", semester: "1", code: "B017101T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Industrial Microbiology", semester: "1", code: "B017102P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Microbiology", semester: "2", code: "B017201T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Industrial Microbiology", semester: "2", code: "B017202P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Microbiology", semester: "3", code: "B017301T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Industrial Microbiology", semester: "3", code: "B017302P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Microbiology", semester: "4", code: "B017401T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Industrial Microbiology", semester: "4", code: "B017402P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Microbiology", semester: "5", code: "B017501T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Microbiology", semester: "5", code: "B017502T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Industrial Microbiology", semester: "5", code: "B017503P" },
+    { class: "BSc.", subjectType: "Project", subject: "Industrial Microbiology", semester: "5", code: "B017504R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Microbiology", semester: "6", code: "B017601T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Microbiology", semester: "6", code: "B017602T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Industrial Microbiology", semester: "6", code: "B017603P" },
+    { class: "BSc.", subjectType: "Project", subject: "Industrial Microbiology", semester: "6", code: "B017604R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Chemistry", semester: "1", code: "B190101T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Industrial Chemistry", semester: "1", code: "B190102P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Chemistry", semester: "2", code: "B190201T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Industrial Chemistry", semester: "2", code: "B190202P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Chemistry", semester: "3", code: "B190301T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Industrial Chemistry", semester: "3", code: "B190302P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Chemistry", semester: "4", code: "B190401T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Industrial Chemistry", semester: "4", code: "B190402P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Chemistry", semester: "5", code: "B190501T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Chemistry", semester: "5", code: "B190502T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Industrial Chemistry", semester: "5", code: "B190503P" },
+    { class: "BSc.", subjectType: "Project", subject: "Industrial Chemistry", semester: "5", code: "B190504R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Chemistry", semester: "6", code: "B190601T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Chemistry", semester: "6", code: "B190602T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Industrial Chemistry", semester: "6", code: "B190603P" },
+    { class: "BSc.", subjectType: "Project", subject: "Industrial Chemistry", semester: "6", code: "B190604R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Chemistry", semester: "6", code: "B190605T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Chemistry", semester: "6", code: "B190606T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Industrial Chemistry", semester: "6", code: "B190607P" },
+    { class: "BSc.", subjectType: "Project", subject: "Industrial Chemistry", semester: "6", code: "B190608R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Chemistry", semester: "6", code: "B190609T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Industrial Chemistry", semester: "6", code: "B190610T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Industrial Chemistry", semester: "6", code: "B190611P" },
+    { class: "BSc.", subjectType: "Project", subject: "Industrial Chemistry", semester: "6", code: "B190612R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Food Science & Quality Control", semester: "1", code: "B058101T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Food Science & Quality Control", semester: "1", code: "B058102P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Food Science & Quality Control", semester: "2", code: "B058201T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Food Science & Quality Control", semester: "2", code: "B058202P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Food Science & Quality Control", semester: "3", code: "B058301T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Food Science & Quality Control", semester: "3", code: "B058302P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Food Science & Quality Control", semester: "4", code: "B058401T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Food Science & Quality Control", semester: "4", code: "B058402P" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Food Science & Quality Control", semester: "5", code: "B058501T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Food Science & Quality Control", semester: "5", code: "B058502T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Food Science & Quality Control", semester: "5", code: "B058503P" },
+    { class: "BSc.", subjectType: "Project", subject: "Food Science & Quality Control", semester: "5", code: "B058504R" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Food Science & Quality Control", semester: "6", code: "B058601T" },
+    { class: "BSc.", subjectType: "Major (Theory)", subject: "Food Science & Quality Control", semester: "6", code: "B058602T" },
+    { class: "BSc.", subjectType: "Major (Practical)", subject: "Food Science & Quality Control", semester: "6", code: "B058603P" },
+    { class: "BSc.", subjectType: "Project", subject: "Food Science & Quality Control", semester: "6", code: "B058604R" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "1", code: "C010101T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "1", code: "C010102T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "1", code: "C010103T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "1", code: "C010104T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "2", code: "C010201T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "2", code: "C010202T" },
+    { class: "BCom.", subjectType: "Major (Practical)", subject: "Commerce", semester: "2", code: "C010203P" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "2", code: "C010204T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "2", code: "C010205T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "3", code: "C010301T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "3", code: "C010302T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "3", code: "C010303T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "3", code: "C010304T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "4", code: "C010401T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "4", code: "C010402T" },
+    { class: "BCom.", subjectType: "Major (Practical)", subject: "Commerce", semester: "4", code: "C010403P" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "4", code: "C010404T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "4", code: "C010405T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "5", code: "C010501T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "5", code: "C010502T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "5", code: "C010503T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "5", code: "C010504T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "5", code: "C010505T" },
+    { class: "BCom.", subjectType: "Project", subject: "Commerce", semester: "5", code: "C010506R" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "6", code: "C010601T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "6", code: "C010602T" },
+    { class: "BCom.", subjectType: "Major (Practical)", subject: "Commerce", semester: "6", code: "C010603P" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "6", code: "C010604T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "6", code: "C010605T" },
+    { class: "BCom.", subjectType: "Major (Theory)", subject: "Commerce", semester: "6", code: "C010606T" },
+    { class: "BCom.", subjectType: "Project", subject: "Commerce", semester: "6", code: "C010607R" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "History", semester: "1-4", code: "Q10001" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Philosophy", semester: "1-4", code: "Q10003" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Economics", semester: "1-4", code: "Q10004" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Physical Education", semester: "1-4", code: "Q10005" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Botany", semester: "1-4", code: "Q10006" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Physics", semester: "1-4", code: "Q10007" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Zoology", semester: "1-4", code: "Q10008" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Microbiology", semester: "1-4", code: "Q10010" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Psychology", semester: "1-4", code: "Q10030" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Law", semester: "1-4", code: "Q10018" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Commerce", semester: "1-4", code: "Q10037" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Sanskrit", semester: "1-4", code: "Q10038" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Mathematics", semester: "1-4", code: "Q10039" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Education", semester: "1-4", code: "Q10002" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Statistics", semester: "1-4", code: "Q10009" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Sanskrit", semester: "1-4", code: "Q10011" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Sociology", semester: "1-4", code: "Q10031" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Law", semester: "1-4", code: "Q10019" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Commerce", semester: "1-4", code: "Q20001" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Mathematics", semester: "1-4", code: "Q20002" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Physical Education", semester: "1-4", code: "Q10032" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Psychology", semester: "1-4", code: "Q10034" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Physics", semester: "1-4", code: "Q10035" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Zoology", semester: "1-4", code: "Q10036" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Law", semester: "1-4", code: "Q10020" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Philosophy", semester: "1-4", code: "Q10012" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Economics", semester: "1-4", code: "Q10033" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Microbiology", semester: "1-4", code: "Q10029" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Commerce", semester: "1-4", code: "Q30001 Or Q30002" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Sanskrit", semester: "1-4", code: "Q30003" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Mathematics", semester: "1-4", code: "Q30004" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Law", semester: "1-4", code: "Q10021" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Botany", semester: "1-4", code: "Q10013" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Commerce", semester: "1-4", code: "Q40001" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Sanskrit", semester: "1-4", code: "Q40002" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Urdu", semester: "1-4", code: "Q40003" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Mathematics", semester: "1-4", code: "Q40004" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Mathematics", semester: "1-4", code: "Q40005" },
+    { class: "BA, BSc., BCom.", subjectType: "Minor", subject: "Mathematics", semester: "1-4", code: "Q40006" },
+    { class: "BA, BSc., BCom.", subjectType: "Co-Curricular", subject: "Food Nutrition and Hygiene", semester: "1", code: "Z010101" },
+    { class: "BA, BSc., BCom.", subjectType: "Co-Curricular", subject: "First AID and Health", semester: "2", code: "Z020201" },
+    { class: "BA, BSc., BCom.", subjectType: "Co-Curricular", subject: "Human Values and Environment Studies", semester: "3", code: "Z030301" },
+    { class: "BA, BSc., BCom.", subjectType: "Co-Curricular", subject: "Physical Education and Yoga", semester: "4", code: "Z040401" },
+    { class: "BA, BSc., BCom.", subjectType: "Co-Curricular", subject: "Analytic Ability and Digital Awareness", semester: "5", code: "Z050501" },
+    { class: "BA, BSc., BCom.", subjectType: "Co-Curricular", subject: "Communication Skills and Personality Development", semester: "6", code: "Z060601" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Certificate course in Computer", semester: "1-4", code: "V0001001" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Mushroom Cultivation", semester: "1-4", code: "V0001002" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Principles and Practice of Banking", semester: "1-4", code: "V0001003" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Basic Communicative English", semester: "1-4", code: "V0001004" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Organic Farming and Sustainable Agricultural Practices", semester: "1-4", code: "V0001005" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Fundamental of - Computer and IT", semester: "1-4", code: "V0001006" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Fundamental of - CAD and CAM", semester: "1-4", code: "V0001007" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Fundamental of - Geographical Information System", semester: "1-4", code: "V0001008" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Patrakarita", semester: "1-4", code: "V0001009" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "The Apparel Designing", semester: "1-4", code: "V0001010" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Book Publication Course", semester: "1-4", code: "V0001011" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Food Preservation", semester: "1-4", code: "V0001012" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Food Testing and Quality Control", semester: "1-4", code: "V0001013" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Instrumental Music Tabla", semester: "1-4", code: "V0001014" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Yoga and Correctives", semester: "1-4", code: "V0001015" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Social work", semester: "1-4", code: "V0001016" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Ayurveda Upcharya and Panchkarma", semester: "1-4", code: "V0001017" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Basic Certificate in Airport Operations", semester: "1-4", code: "V0001018" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Basic Certificate in Cabin Crew", semester: "1-4", code: "V0001019" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Basic Certificate in Fundamentals of science Laboratory", semester: "1-4", code: "V0001020" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Basic Certificate in Itinerary Development", semester: "1-4", code: "V0001021" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Basic Certificate in Medical Laboratory", semester: "1-4", code: "V0001022" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Basic Certificate in Travel Agency and Tour Operations", semester: "1-4", code: "V0001023" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Certificate in Application of different techniques in biological sciences", semester: "1-4", code: "V0001024" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Certificate course in Biomusicology (Music Therapy): Level-1", semester: "1-4", code: "V0001025" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "MOOCS", semester: "1-4", code: "V0001026" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Communication Skill and Personality Development", semester: "1-4", code: "V0001027" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Heritage Guide", semester: "1-4", code: "V0001028" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "News Writing and Reporting", semester: "1-4", code: "V0001029" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Sports Engineering", semester: "1-4", code: "V0001030" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Certificate Course in Organic Farming", semester: "1-4", code: "V0001031" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Skill Development Course in Retail Management", semester: "1-4", code: "V0001032" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Folk Art", semester: "1-4", code: "V0001033" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Yog, Ayurveda, Varnochcharan shiksha Evm suktiyan (Samany Parichayatmak)", semester: "1-4", code: "V0001034" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Jyotish, Vastu Evm Purohitya Kaushal (Samany Parichayatmak)", semester: "1-4", code: "V0001035" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Sambhashan Sanskritam (Spoken Sanskrit)", semester: "1-4", code: "V0001036" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Tourism and Cultural Heritage", semester: "1-4", code: "V0001037" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Media Techniques, Journalism and Mass Communication", semester: "1-4", code: "V0001038" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Hospitality Management", semester: "1-4", code: "V0001039" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Archives and Museology", semester: "1-4", code: "V0001040" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Basic Clinical Techniques", semester: "1-4", code: "V0001041" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Computer Aur Hindi Bhasha", semester: "1-4", code: "V0001042" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Hindi Patrakarita (Print Madhyam)", semester: "1-4", code: "V0001043" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Hindi Patrakarita (Electronic Madhyam)", semester: "1-4", code: "V0001044" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Drashy-Shravy Madhyam Lekhan", semester: "1-4", code: "V0001045" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Population and Environmental Education", semester: "1-4", code: "V0001046" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Life Skill & Value Education", semester: "1-4", code: "V0001047" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Organic Farming", semester: "1-4", code: "V0001048" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Pharmacognosy and Herbal Preparations", semester: "1-4", code: "V0001049" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Soil Health Assessment", semester: "1-4", code: "V0001050" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Seed Production Technology & Testing", semester: "1-4", code: "V0001051" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Mushroom Cultivation Technology", semester: "1-4", code: "V0001052" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Commercial Horticulture", semester: "1-4", code: "V0001053" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Floriculture and Landscaping", semester: "1-4", code: "V0001054" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Media and Journalist writing course", semester: "1-4", code: "V0001055" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Soil, Plant and water Analysis", semester: "1-4", code: "V0001056" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Agriculture Waste Management", semester: "1-4", code: "V0001057" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Organic Production Technology", semester: "1-4", code: "V0001058" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Audio-Visual Aids & Agro-Informatics", semester: "1-4", code: "V0001059" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Production Technology for Bio-agents and Bio-fertilizers", semester: "1-4", code: "V0001060" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Commercial Beekeeping", semester: "1-4", code: "V0001061" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Commercial Sericulture", semester: "1-4", code: "V0001062" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Poultry Production Technology", semester: "1-4", code: "V0001063" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Food Processing", semester: "1-4", code: "V0001064" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Computer Application and Bioinformatics", semester: "1-4", code: "V0001065" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Nutritional Therapy", semester: "1-4", code: "V0001066" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Food Processing, Preservation and Packaging", semester: "1-4", code: "V0001067" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Introduction to Mutual Fund Part-1", semester: "1-4", code: "V0001068" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Introduction to Mutual Fund Part-2", semester: "1-4", code: "V0001069" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Introduction to Share Market Part-1", semester: "1-4", code: "V0001070" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Introduction to Share Market Part-2", semester: "1-4", code: "V0001071" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Introduction to e-return", semester: "1-4", code: "V0001072" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Introduction to Textile Management", semester: "1-4", code: "V0001073" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Handicraft (Sketching and Painting Artisan(Ceramics)", semester: "1-4", code: "V0001074" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Food processing (Fruits and Vegitables)", semester: "1-4", code: "V0001075" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Self Employed Tailor Skill Course", semester: "1-4", code: "V0001076" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Computer Basic", semester: "1-4", code: "V0001077" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "IT", semester: "1-4", code: "V0001078" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Hand Embroidery (Handicraft)", semester: "1-4", code: "V0001079" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Home Science (Crochet lace Maker)", semester: "1-4", code: "V0001080" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Beauty & Wellness", semester: "1-4", code: "V0001081" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Handicraft (Paper Mache)", semester: "1-4", code: "V0001082" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Handicraft (Beading Artisan (Fashion Jewellery))", semester: "1-4", code: "V0001083" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Information Technology", semester: "1-4", code: "V0001084" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Skill Development in Stress Management", semester: "1-4", code: "V0001085" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Skill Development in Guidance and Counselling", semester: "1-4", code: "V0001086" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Skill and Strategies in Psychotherapy", semester: "1-4", code: "V0001087" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Yogic Science", semester: "1-4", code: "V0001088" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Proyajanmulak Anusandhan (Applied Research)", semester: "1-4", code: "V0001089" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Yoga", semester: "1-4", code: "V0001090" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Proyajanmulak Hindi (Functional Hindi)", semester: "1-4", code: "V0001091" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Introduction to Organic Farming", semester: "1-4", code: "V0001092" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Basic Clinical Techniques-Part I", semester: "1-4", code: "V0001094" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Fundamentals of Library Science", semester: "1-4", code: "V0001095" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Web Designing", semester: "1-4", code: "V0001097" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Foundation Course in Digital Marketing", semester: "1-4", code: "V0001099" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Basic Certificate in MIS", semester: "1-4", code: "V0001100" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Computerized Accounting & GST", semester: "1-4", code: "V0001101" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Advance Excel", semester: "1-4", code: "V0001104" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Clay Craft", semester: "1-4", code: "V0001105" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Basic Stitching Skill", semester: "1-4", code: "V0001106" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Advance Stitching Skill", semester: "1-4", code: "V0001107" },
+    { class: "BA, BSc., BCom.", subjectType: "Skill Development", subject: "Vedic Mathematics", semester: "1-4", code: "V0001108" }
+];
+// --- END: Integrated Course Data ---
+
+
+let majorTheoryCount=0, majorPracticalCount=0, projectCount=0;
+const maxGrace=5, maxGraceSubjects=3;
+// Initially add 3 major theory rows
+for(let i=0;i<3;i++) addMajorTheory();
+
+// Tab script
+function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tab-link");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+document.getElementById("defaultOpen").click();
+
+function updateAllDropdowns() {
+    const sem = document.getElementById("semester").value;
+    const className = document.getElementById("className").value;
+    const semTitle = document.getElementById("semTitle");
+    const marksSection = document.getElementById("marksSection");
+
+    if (sem === "" || className === "") {
+        return;
+    }
+    
+    // --- NEW: Multi-step form logic ---
+    document.getElementById('welcomeScreen').style.display = 'none';
+    document.getElementById('step1').style.display = 'none';
+    marksSection.style.display = 'block';
+    
+    semTitle.innerHTML = "Enter Marks for Semester: " + sem;
+    document.getElementById("minorSection").style.display = (sem === "5" || sem === "6") ? "none" : "block";
+    document.getElementById("skillSection").style.display = (sem === "5" || sem === "6") ? "none" : "block";
+    document.getElementById("projectSection").style.display = (sem === "6") ? "block" : "none";
+
+    // Update all existing dropdowns
+    populateDropdownGroup('#majorTheorySubjects', 'Major (Theory)');
+    populateDropdownGroup('#majorPracticalSubjects', 'Major (Practical)');
+    populateDropdownGroup('.minorCode', 'Minor', true);
+    populateDropdownGroup('.skillCode', 'Skill Development', true);
+    populateDropdownGroup('#projectSubjects', 'Project');
+    populateDropdownGroup('.coCurricular', 'Co-Curricular', true);
+    updateDropdownAvailability(); // Initial check for dropdown options
+
+    // Focus on the first input of the new screen
+    const firstInput = document.querySelector('#majorTheorySubjects .majorTheoryExternal');
+    if (firstInput) {
+        firstInput.focus();
+    }
+}
+
+
+function getFilteredSubjects(subjectType) {
+    const selectedClass = document.getElementById('className').value;
+    const selectedSem = parseInt(document.getElementById('semester').value, 10);
+    if (!selectedClass || isNaN(selectedSem)) return [];
+
+    return courseData.filter(course => {
+        const classMatch = course.class.includes(selectedClass);
+        const typeMatch = course.subjectType === subjectType;
+        
+        let semMatch = false;
+        if (course.semester.includes('-')) {
+            const [start, end] = course.semester.split('-').map(Number);
+            semMatch = selectedSem >= start && selectedSem <= end;
+        } else {
+            semMatch = parseInt(course.semester, 10) === selectedSem;
+        }
+
+        return classMatch && typeMatch && semMatch;
+    });
+}
+
+function populateDropdown(selectElement, subjectType) {
+    const subjects = getFilteredSubjects(subjectType);
+    selectElement.innerHTML = '<option value="">-- Select Subject --</option>';
+    subjects.forEach(subject => {
+        const option = document.createElement('option');
+        option.value = subject.code;
+        option.textContent = `${subject.subject} (${subject.code})`;
+        selectElement.appendChild(option);
+    });
+}
+
+function populateDropdownGroup(containerSelector, subjectType, isSingle = false) {
+    if (isSingle) {
+        const selectElement = document.querySelector(containerSelector);
+        if (selectElement) populateDropdown(selectElement, subjectType);
+    } else {
+        const container = document.getElementById(containerSelector.substring(1));
+        if (container) {
+            const dropdowns = container.querySelectorAll('.subjectCode');
+            dropdowns.forEach(dd => populateDropdown(dd, subjectType));
+        }
+    }
+}
+
+function updateDropdownAvailability() {
+    const allDropdowns = document.querySelectorAll('.subjectCode');
+    const selectedValues = new Set();
+
+    allDropdowns.forEach(dropdown => {
+        if (dropdown.value !== '') {
+            selectedValues.add(dropdown.value);
+        }
+    });
+
+    allDropdowns.forEach(dropdown => {
+        const currentSelection = dropdown.value;
+        for (const option of dropdown.options) {
+            if (option.value !== '') {
+                if (selectedValues.has(option.value) && option.value !== currentSelection) {
+                    option.style.display = 'none';
+                } else {
+                    option.style.display = 'block';
+                }
+            }
+        }
+    });
+}
+
+function addSubject(containerId, name, subjectType, fields) {
+    const container = document.getElementById(containerId);
+    container.style.display = "block";
+    const div = document.createElement("div");
+    div.className = "subject";
+    
+    let inputFieldsHTML = `<label>${name}:</label>
+                           <select class="subjectCode" style="flex-grow:1;"><option value="">-- Select Subject --</option></select>`;
+    
+    fields.forEach(field => {
+        inputFieldsHTML += ` ${field.label} <input type="number" class="${field.class}" min="0" max="${field.max}">`;
+    });
+
+    div.innerHTML = inputFieldsHTML;
+    container.appendChild(div);
+
+    const newSelect = div.querySelector('.subjectCode');
+    newSelect.addEventListener('change', updateDropdownAvailability);
+    populateDropdown(newSelect, subjectType);
+    updateDropdownAvailability();
+}
+
+function addMajorTheory() {
+    majorTheoryCount++;
+    addSubject("majorTheorySubjects", "Major Theory " + majorTheoryCount, "Major (Theory)", [
+        { label: "EXT", class: "majorTheoryExternal", max: 75 },
+        { label: "INT", class: "majorTheoryInternal", max: 25 }
+    ]);
+}
+function addMajorPractical() {
+    majorPracticalCount++;
+    addSubject("majorPracticalSubjects", "Major Practical " + majorPracticalCount, "Major (Practical)", [
+        { label: "EXT", class: "majorPracticalExternal", max: 75 },
+        { label: "INT", class: "majorPracticalInternal", max: 25 }
+    ]);
+}
+function addProject() {
+    projectCount++;
+    addSubject("projectSubjects", "Project " + projectCount, "Project", [
+        { label: "Total", class: "projectMarks", max: 100 }
+    ]);
+}
+
+
+function showError(msg){
+  var el = document.getElementById('errorMsg');
+  if(el){ el.textContent = msg; el.className = 'error-blink'; el.style.display = 'block'; }
+}
+function hideError(){
+  var el = document.getElementById('errorMsg');
+  if(el){ el.style.display = 'none'; el.className = '';}
+}
+
+function validateMarks() {
+    let allValid = true;
+    const inputs = document.querySelectorAll('input[type="number"]');
+    inputs.forEach(input => {
+        const value = parseFloat(input.value);
+        const max = parseFloat(input.max);
+        if (input.offsetParent !== null && !isNaN(value) && !isNaN(max) && value > max) {
+            allValid = false;
+        }
+    });
+    return allValid;
+}
+
+
+function calculateResult(){
+  hideError();
+
+  if (!validateMarks()) {
+      showError("Entered Marks are more than Max Marks");
+      return;
+  }
+
+  const studentName = document.getElementById('studentName').value;
+  const rollNumber = document.getElementById('rollNumber').value;
+  const className = document.getElementById('className').value;
+  const semester = document.getElementById('semester').value;
+
+  if (!studentName || !rollNumber || !className || !semester) {
+    showError("Please fill in Student Name, Roll Number, Class, and Semester.");
+    return;
+  }
+ 
+  let majorTheoryFilledCount = 0;
+  document.querySelectorAll('#majorTheorySubjects .subject').forEach(div => {
+      const extInput = div.querySelector('.majorTheoryExternal');
+      const intInput = div.querySelector('.majorTheoryInternal');
+      if (extInput && intInput && extInput.value.trim() !== '' && intInput.value.trim() !== '') {
+          majorTheoryFilledCount++;
+      }
+  });
+
+  const coExtInput = document.querySelector('#coCurricularSection .coExternal');
+  const coIntInput = document.querySelector('#coCurricularSection .coInternal');
+  const isCoCurricularFilled = coExtInput && coIntInput && coExtInput.value.trim() !== '' && coIntInput.value.trim() !== '';
+
+  if (majorTheoryFilledCount < 3) {
+      showError("Minimum 3 Major Theory subjects marks are mandatory.");
+      return;
+  }
+  if (!isCoCurricularFilled) {
+      showError("Co-Curricular subject marks are mandatory.");
+      return;
+  }
+
+  let isValid = true;
+  function validateEntries(containerSelector, inputs) {
+      const subjectDivs = document.querySelectorAll(containerSelector);
+      subjectDivs.forEach(div => {
+          if (div.offsetParent === null) return; // Skip hidden sections
+          const select = div.querySelector('select');
+          if (select && select.value !== '') {
+              for (const inputClass of inputs) {
+                  const input = div.querySelector(`.${inputClass}`);
+                  if (input && input.value.trim() === '') {
+                      isValid = false;
+                  }
+              }
+          }
+      });
+  }
+  validateEntries('#majorTheorySubjects .subject', ['majorTheoryExternal', 'majorTheoryInternal']);
+  validateEntries('#majorPracticalSubjects .subject', ['majorPracticalExternal', 'majorPracticalInternal']);
+  validateEntries('#minorSection .subject', ['minorExternal', 'minorInternal']);
+  validateEntries('#skillSection .subject', ['skillTheory', 'skillPractical']);
+  validateEntries('#coCurricularSection .subject', ['coExternal', 'coInternal']);
+  validateEntries('#projectSubjects .subject', ['projectMarks']);
+
+  if (!isValid) {
+      showError("Please enter marks for all subjects you have selected.");
+      return;
+  }
+  
+  let graceLeft=maxGrace, remainingGraceSubjects=maxGraceSubjects;
+  let subjects=[];
+
+  const processMultipleSubjects = (containerSelector, type, extClass, intClass) => {
+      const subjectDivs = document.querySelectorAll(`${containerSelector} .subject`);
+      subjectDivs.forEach(parent => {
+          const selectElement = parent.querySelector('.subjectCode');
+          const code = selectElement.value;
+          if (!code) return;
+
+          const selectedOption = selectElement.options[selectElement.selectedIndex];
+          const subjectName = selectedOption.text.replace(` (${code})`, '');
+          const ext = extClass ? Number(parent.querySelector(`.${extClass}`).value) || 0 : 0;
+          const intr = intClass ? Number(parent.querySelector(`.${intClass}`).value) || 0 : 0;
+          
+          if(ext !== 0 || intr !== 0 || type === 'project') {
+              subjects.push({ name: subjectName, code, ext, internal: intr, type, grace: 0, initialPass: false });
+          }
+      });
+  };
+
+  const processSingleSubject = (parentSelector, type, codeClass, extClass, intClass) => {
+      const parent = document.querySelector(parentSelector);
+      if (!parent || parent.offsetParent === null) return;
+      
+      const selectElement = parent.querySelector(`.${codeClass}`);
+      const code = selectElement.value;
+      if (!code) return;
+      
+      const selectedOption = selectElement.options[selectElement.selectedIndex];
+      const subjectName = selectedOption.text.replace(` (${code})`, '');
+      const ext = extClass ? Number(parent.querySelector(`.${extClass}`).value) || 0 : 0;
+      const intr = intClass ? Number(parent.querySelector(`.${intClass}`).value) || 0 : 0;
+
+      if(ext !== 0 || intr !== 0) {
+           subjects.push({ name: subjectName, code, ext, internal: intr, type, grace: 0, initialPass: false });
+      }
+  };
+
+  processMultipleSubjects("#majorTheorySubjects", "majorTheory", "majorTheoryExternal", "majorTheoryInternal");
+  processMultipleSubjects("#majorPracticalSubjects", "majorPractical", "majorPracticalExternal", "majorPracticalInternal");
+  processMultipleSubjects("#projectSubjects", "project", "projectMarks", null);
+  processSingleSubject("#minorSection .subject", "minor", "minorCode", "minorExternal", "minorInternal");
+  processSingleSubject("#skillSection .subject", "skill", "skillCode", "skillPractical", "skillTheory");
+  processSingleSubject("#coCurricularSection .subject", "coCurricular", "coCurricular", "coExternal", "coInternal");
+
+  function checkPass(subj,extTotal){
+    const total=subj.internal+extTotal;
+    if(subj.type==="majorTheory"||subj.type==="minor"||subj.type==="majorPractical") return (extTotal>=25 && total>=33);
+    if(subj.type==="skill"||subj.type==="coCurricular"||subj.type==="project") return total>=40;
+    return false;
+  }
+
+  subjects.forEach(subj=>{ subj.initialPass = checkPass(subj,subj.ext); });
+
+  subjects.forEach(subj=>{
+    if(graceLeft<=0 || remainingGraceSubjects<=0 || subj.initialPass) return;
+    let total=subj.ext+subj.internal;
+    let needGrace=0;
+    if(subj.type==="majorTheory"||subj.type==="minor"||subj.type==="majorPractical"){
+      if(subj.ext<25) needGrace=25-subj.ext;
+      if(needGrace===0 && total<33 && subj.ext>=25) needGrace=33-total;
+    } else if(subj.type==="skill"||subj.type==="coCurricular"||subj.type==="project"){ if(total<40) needGrace=40-total; }
+    if(needGrace>0){ const applied=Math.min(needGrace,graceLeft,maxGrace); subj.ext+=applied; subj.grace+=applied; graceLeft-=applied; remainingGraceSubjects--; }
+  });
+
+  let anyFailAfterGrace=false;
+  subjects.forEach(subj=>{ if(!checkPass(subj,subj.ext)) anyFailAfterGrace=true; });
+
+  const subjectTypeMap = {
+      majorTheory: 'Major (Theory)',
+      majorPractical: 'Major (Practical)',
+      minor: 'Minor',
+      skill: 'Skill Development',
+      coCurricular: 'Co-Curricular',
+      project: 'Project'
+  };
+
+  let tbodyHTML = '';
+  subjects.forEach(subj=>{
+    let total=subj.ext+subj.internal;
+    let status=checkPass(subj,subj.ext)?"Pass":"Fail";
+    if(anyFailAfterGrace && subj.grace>0) total = (subj.ext - subj.grace) + subj.internal;
+   
+    let remark="";
+    if(status==="Fail"){
+      if(anyFailAfterGrace && subj.grace>0) {
+        subj.ext -= subj.grace;
+      }
+      if(subj.type==="majorTheory"||subj.type==="minor"||subj.type==="majorPractical"){
+        if(subj.ext<25) remark=`Need ${25-subj.ext} in External`;
+        else if(total<33) remark=`Need ${33-total} in Total`;
+      } else { remark=`Need ${40-total} in Total`; }
+    } else { remark="-"; }
+    if(anyFailAfterGrace && subj.grace>0) remark = `Grace Cancelled - ${remark}`;
+    
+    let obtainedMarks = subj.ext - subj.grace;
+    let internalMarks = subj.internal;
+    
+    const graceValue = anyFailAfterGrace ? 0 : subj.grace;
+    const graceDisplay = graceValue > 0 ? `<span style="color: darkred; font-size: 1.1em; font-weight: bold;">${graceValue}</span>` : '-';
+
+    const trClass = graceValue > 0 ? "graceApplied" : "";
+    const statusClass = status === 'Pass' ? 'pass' : 'fail';
+    const subjectTypeText = subjectTypeMap[subj.type] || subj.type;
+    tbodyHTML += `<tr class="${trClass}"><td>${subjectTypeText}</td><td>${subj.code}</td><td>${subj.name}</td><td>${obtainedMarks}</td><td class="grace">${graceDisplay}</td><td>${subj.ext}</td><td>${internalMarks}</td><td>${total}</td><td class="${statusClass}">${status}</td><td>${remark}</td></tr>`;
+  });
+
+  const selectedSemester = document.getElementById('semester').options[document.getElementById('semester').selectedIndex].text;
+  const generationTime = new Date().toLocaleString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+  const studentDetailsHTML = `<div><b>Name:</b> ${studentName}</div><div><b>Roll No:</b> ${rollNumber}</div><div><b>Program:</b> ${className} (NEP)</div><div><b>Semester:</b> ${selectedSemester}</div><div style="flex-basis: 100%; text-align: right; font-size: 0.8em; margin-top: 5px;"><b>Generated On:</b> ${generationTime}</div>`;
+  
+  let overallHTML, overallClassName, congratsHTML, playSound;
+  if(anyFailAfterGrace){
+    const failMessage='(ग्रेस मिलने के बाद भी यदि किसी भी विषय में बैक रहती है तो किसी भी विषय में ग्रेस नहीं मिलेगा)';
+    overallHTML=`Overall Result: <span class="fail">FAIL</span><br><small style="color: #333; font-weight: normal;">${failMessage}</small>`;
+    overallClassName = 'overall-fail';
+    congratsHTML = `<h2>Result</h2>`;
+    playSound = false;
+  } else {
+    let totalGraceApplied = subjects.reduce((sum,subj)=>sum+(anyFailAfterGrace ? 0 : subj.grace),0);
+    if(totalGraceApplied>0){
+      overallHTML=`Overall Result: <span class="pass">PASS</span><br><small style="color: #333; font-weight: normal;">with Grace (${totalGraceApplied} Marks)</small>`;
+    } else {
+      overallHTML=`Overall Result: <span class="pass">PASS</span>`;
+    }
+    overallClassName = 'overall-pass';
+    congratsHTML = `<h2 class="flash-animation">🎉 Congratulations! 🎉</h2>`;
+    playSound = true;
+  }
+
+  showResultModal(studentDetailsHTML, tbodyHTML, overallHTML, overallClassName, congratsHTML, playSound);
+}
+
+function downloadPDF(){
+    const element = document.getElementById("gradeCard");
+    const studentName = document.getElementById('studentName').value.trim() || 'student';
+    const rollNumber = document.getElementById('rollNumber').value.trim() || '0000';
+    const opt = {
+        margin: 0.3,
+        filename: `GradeCard_${studentName.replace(/\s/g, '_')}_${rollNumber}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+    };
+    html2pdf().set(opt).from(element).save();
+}
+
+function printGradeCard() {
+    document.body.classList.add('modal-open');
+    window.print();
+    document.body.classList.remove('modal-open');
+}
+
+function showResultModal(studentDetailsHTML, tbodyHTML, overallHTML, overallClassName, congratsHTML, playSound) {
+    const modal = document.getElementById('resultModal');
+    const modalBody = document.getElementById('modalBody');
+
+    const gradeCardHTML = `
+        <div id="gradeCard">
+            <div class="header-logo">
+                <div class="university-info">
+                    <h3>Chaudhary Charan Singh University, Meerut</h3>
+                    <h4>Unofficial Grade Card (NEP)</h4>
+                </div>
+            </div>
+            
+            <div id="congratsMsg">${congratsHTML}</div>
+            <div id="studentDetails">${studentDetailsHTML}</div>
+            
+            <table id="resultTable">
+                <thead>
+                <tr>
+                    <th>Subject Type</th>
+                    <th>Sub Code</th>
+                    <th>Subject</th>
+                    <th>Obtained Marks</th>
+                    <th>Grace</th>
+                    <th>Final Marks</th>
+                    <th>Internal</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                </tr>
+                </thead>
+                <tbody>${tbodyHTML}</tbody>
+            </table>
+            
+            <div id="overall" class="${overallClassName}">${overallHTML}</div>
+            
+            <div class="action-buttons" style="text-align:center; margin-top:20px;">
+                <button onclick="downloadPDF()">Download as PDF</button>
+                <button onclick="printGradeCard()">Print</button>
+            </div>
+            
+            <div id="note">
+                <strong>अस्वीकरण:</strong> यह एक अनौपचारिक ग्रेड कार्ड है और केवल सूचना के उद्देश्यों के लिए है। यह चौधरी चरण सिंह विश्वविद्यालय, मेरठ द्वारा जारी आधिकारिक दस्तावेज़ नहीं है। किसी भी विसंगति के लिए, कृपया विश्वविद्यालय के आधिकारिक रिकॉर्ड को देखें।
+            </div>
+            <div class="modal-bottom-close">
+               <button id="bottomCloseBtn">Close</button>
+            </div>
+        </div>
+    `;
+    modalBody.innerHTML = gradeCardHTML;
+    modal.style.display = 'flex';
+
+    if (playSound) {
+        document.getElementById('successSound').play().catch(e => console.log("Audio playback failed. User interaction might be needed."));
+    }
+}
+
+
+function resetForm(){ location.reload(); }
+
+// --- START: Page Interaction Logic ---
+document.addEventListener('DOMContentLoaded', (event) => {
+    // Modal closing logic
+    const modal = document.getElementById('resultModal');
+    const closeBtn = document.querySelector('.modal-close-btn');
+    const hideModal = () => modal.style.display = 'none';
+
+    closeBtn.onclick = hideModal;
+    modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            hideModal();
+        }
+    });
+    // Add event listener for the bottom close button dynamically since it's created with the modal content
+    document.body.addEventListener('click', function(event) {
+        if (event.target.id === 'bottomCloseBtn') {
+            hideModal();
+        }
+    });
+
+    // Dropdown availability logic for static dropdowns
+    document.querySelectorAll('.minorCode, .skillCode, .coCurricular').forEach(select => {
+        select.addEventListener('change', updateDropdownAvailability);
+    });
+
+    // Form navigation and display logic
+    const checkResultBtn = document.getElementById('checkResultBtn');
+    const step1 = document.getElementById('step1');
+    const studentName = document.getElementById('studentName');
+    const rollNumber = document.getElementById('rollNumber');
+    const className = document.getElementById('className');
+    const semester = document.getElementById('semester');
+
+    checkResultBtn.addEventListener('click', function() {
+        step1.style.display = 'block';
+        const rulesSection = document.querySelector('.rules');
+        rulesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        setTimeout(() => {
+            const studentInfoSection = studentName.closest('.subject-section');
+            if (studentInfoSection) {
+                 studentInfoSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            studentName.focus();
+        }, 1500); // 1.5 seconds delay
+    });
+
+    const handleEnterNavigation = (currentElement, nextElement) => {
+        currentElement.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                nextElement.focus();
+            }
+        });
+    };
+
+    handleEnterNavigation(studentName, rollNumber);
+    handleEnterNavigation(rollNumber, className);
+    
+    className.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            semester.focus();
+        }
+    });
+});
+// --- END: Page Interaction Logic ---
+
+</script>
 </body>
 </html>
