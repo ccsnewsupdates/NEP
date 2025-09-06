@@ -300,9 +300,9 @@ footer {
 
 /* Popup ka parde jaisa background (Overlay) */
 .popup-overlay {
-  display: none; /* Shuru mein chhupa rahega */
-  position: fixed; /* Screen par fix rahega */
-  z-index: 1000; /* Sabse upar dikhega */
+  display: none; /* YEH LINE SABSE ZAROORI HAI: Isse popup shuru mein gayab rahega */
+  position: fixed;
+  z-index: 1000;
   left: 0;
   top: 0;
   width: 100%;
@@ -345,5 +345,6 @@ footer {
 .close-button:hover {
   transform: scale(1.05);
 }
+
 
 
