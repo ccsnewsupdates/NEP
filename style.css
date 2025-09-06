@@ -295,3 +295,55 @@ footer {
 @keyframes blink{
     50% { opacity:0; }
 }
+
+/* --- POPUP MODAL STYLES --- */
+
+/* Popup ka parde jaisa background (Overlay) */
+.popup-overlay {
+  display: none; /* Shuru mein chhupa rahega */
+  position: fixed; /* Screen par fix rahega */
+  z-index: 1000; /* Sabse upar dikhega */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* Agar content zyada ho to scroll ho sake */
+  background-color: rgba(0,0,0,0.6); /* Halka kaala background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Popup ka main content box */
+.popup-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 25px;
+  border: 1px solid #888;
+  width: 90%;
+  max-width: 950px; /* Popup ki maximum chaudai */
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  position: relative;
+  max-height: 90vh; /* Popup ki maximum lambai */
+  overflow-y: auto; /* Content zyada hone par scrollbar dega */
+}
+
+/* Close Button ki styling */
+.close-button {
+  background: linear-gradient(45deg, #dc3545, #c82333);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 600;
+  display: block; /* Button ko block banata hai */
+  margin: 20px auto 0; /* Upar se 20px margin aur center mein */
+  transition: transform 0.2s ease;
+}
+
+.close-button:hover {
+  transform: scale(1.05);
+}
