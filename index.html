@@ -251,6 +251,12 @@ button:active, .social-button:active {
     box-shadow: 0 3px 10px rgba(0,0,0,0.3);
 }
 
+/* --- MODIFICATION 1 START: Green button for social media --- */
+.social-media-btn {
+    background: linear-gradient(45deg, #28a745, #20c997);
+}
+/* --- MODIFICATION 1 END --- */
+
 /* Style for the new tutorial button */
 .tutorial-button {
     background: linear-gradient(45deg, #e52d27 0%, #b31217 100%);
@@ -339,7 +345,7 @@ footer {
     </div>
 
     <div class="social-buttons-container">
-        <a href="https://linkbio.co/ccsupdates" target="_blank" class="social-button">Other Social Media Links</a>
+        <a href="https://linkbio.co/ccsupdates" target="_blank" class="social-button social-media-btn">Other Social Media Links</a>
         <a href="https://youtu.be/YxxzgcotoU0" target="_blank" class="social-button tutorial-button">Tutorial Video Watch Here</a>
     </div>
 
@@ -1356,6 +1362,41 @@ function calculateResult(){
       return;
   }
   // --- END VALIDATION 2 ---
+
+  // --- MODIFICATION 2 START: New validation for mandatory subject selection ---
+  // --- VALIDATION 3: Check for marks entered without a subject selected ---
+  let selectionIsValid = true;
+  function validateSelection(containerSelector, inputs, selectClass = 'subjectCode') {
+      const subjectDivs = document.querySelectorAll(containerSelector);
+      subjectDivs.forEach(div => {
+          const select = div.querySelector(`select.${selectClass}`);
+          let marksEntered = false;
+          for (const inputClass of inputs) {
+              const input = div.querySelector(`.${inputClass}`);
+              if (input && input.value.trim() !== '') {
+                  marksEntered = true;
+                  break; // Found marks, no need to check other inputs in this row
+              }
+          }
+          if (marksEntered && (!select || select.value === '')) {
+              selectionIsValid = false;
+          }
+      });
+  }
+
+  validateSelection('#majorTheorySubjects .subject', ['majorTheoryExternal', 'majorTheoryInternal']);
+  validateSelection('#majorPracticalSubjects .subject', ['majorPracticalExternal', 'majorPracticalInternal']);
+  validateSelection('#minorSection .subject', ['minorExternal', 'minorInternal'], 'minorCode');
+  validateSelection('#skillSection .subject', ['skillTheory', 'skillPractical'], 'skillCode');
+  validateSelection('#coCurricularSection .subject', ['coExternal', 'coInternal'], 'coCurricular');
+  validateSelection('#projectSubjects .subject', ['projectMarks']);
+  
+  if (!selectionIsValid) {
+      showError("Please select a subject for all rows where marks have been entered.");
+      return;
+  }
+  // --- END VALIDATION 3 ---
+  // --- MODIFICATION 2 END ---
   
   let graceLeft=maxGrace, remainingGraceSubjects=maxGraceSubjects;
   let subjects=[];
